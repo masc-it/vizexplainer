@@ -1,0 +1,901 @@
+{
+  "title": "How vizexplainer works",
+  "subtitle": "A toolkit that lets AI agents turn their understanding of a codebase into a polished, interactive page.",
+  "summary": "An agent studies some code, writes down *what matters* as structured data, and vizexplainer turns that data into a single HTML file anyone can open. This page was itself produced that way: it explains the toolkit's own source code.",
+  "root": "../..",
+  "components": [
+    "./components/bars.mjs"
+  ],
+  "entities": {
+    "agent": {
+      "label": "AI agent",
+      "kind": "actor",
+      "summary": "Reads the codebase, decides what to explain and in which order, and writes the explainer document."
+    },
+    "reader": {
+      "label": "Reader",
+      "kind": "actor",
+      "summary": "Anyone with a browser: a developer, a manager, a student. No install needed."
+    },
+    "doc": {
+      "label": "explainer.json",
+      "kind": "data",
+      "summary": "The document the agent writes: **entities** (things worth naming), **relations** (how they connect) and **blocks** (how to present them)."
+    },
+    "output": {
+      "label": "explainer.html",
+      "kind": "data",
+      "summary": "One self-contained file with all CSS, scripts, diagrams and highlighted code inlined. Works offline and on any static host."
+    },
+    "src": {
+      "label": "src",
+      "kind": "folder",
+      "summary": "All of the toolkit's TypeScript source."
+    },
+    "cli": {
+      "label": "cli.ts",
+      "kind": "module",
+      "parent": "src",
+      "summary": "The `vizx` command: `render`, `validate`, `components` and `schema`.",
+      "source": {
+        "file": "src/cli.ts",
+        "symbol": "main"
+      }
+    },
+    "build": {
+      "label": "build.ts",
+      "kind": "module",
+      "parent": "src",
+      "summary": "Orchestrates a build: load the document, load components, render, assemble the page. The only place that touches the file system.",
+      "source": {
+        "file": "src/build.ts",
+        "symbol": "renderExplainer"
+      }
+    },
+    "issues": {
+      "label": "issues.ts",
+      "kind": "module",
+      "parent": "src",
+      "summary": "Problems are collected with exact paths like `blocks[2].children[0]` plus *did you mean* hints, so an agent can fix them without guessing."
+    },
+    "html": {
+      "label": "html.ts",
+      "kind": "module",
+      "parent": "src",
+      "summary": "A tiny safe templating helper: interpolated values are escaped unless they are already HTML.",
+      "source": {
+        "file": "src/html.ts",
+        "symbol": "html"
+      }
+    },
+    "document": {
+      "label": "document",
+      "kind": "folder",
+      "parent": "src",
+      "summary": "The data model: what an explainer *is*, independent of how it looks."
+    },
+    "schema": {
+      "label": "schema.ts",
+      "kind": "module",
+      "parent": "document",
+      "summary": "Zod schemas for documents, entities, relations, sources and blocks.",
+      "source": {
+        "file": "src/document/schema.ts",
+        "symbol": "Entity"
+      }
+    },
+    "model": {
+      "label": "model.ts",
+      "kind": "module",
+      "parent": "document",
+      "summary": "An indexed, read-only view of entities and relations, plus cross-reference checks the schema can't express.",
+      "source": {
+        "file": "src/document/model.ts",
+        "symbol": "checkModel"
+      }
+    },
+    "components": {
+      "label": "components",
+      "kind": "folder",
+      "parent": "src",
+      "summary": "The presentation vocabulary agents compose."
+    },
+    "define": {
+      "label": "define.ts",
+      "kind": "module",
+      "parent": "components",
+      "summary": "The component contract: a name, a description for agents, a props schema and a render function.",
+      "source": {
+        "file": "src/components/define.ts",
+        "symbol": "ComponentDefinition"
+      }
+    },
+    "registry": {
+      "label": "registry.ts",
+      "kind": "module",
+      "parent": "components",
+      "summary": "Combines built-in components with the document's custom ones and checks each custom module's shape.",
+      "source": {
+        "file": "src/components/registry.ts",
+        "symbol": "loadRegistry"
+      }
+    },
+    "builtin": {
+      "label": "builtin/",
+      "kind": "folder",
+      "parent": "components",
+      "summary": "Twenty ready-made components, from sections and prose to graphs, sequence and state diagrams, diffs and quizzes."
+    },
+    "render": {
+      "label": "render",
+      "kind": "folder",
+      "parent": "src",
+      "summary": "Turns a validated document into HTML."
+    },
+    "engine": {
+      "label": "engine.ts",
+      "kind": "module",
+      "parent": "render",
+      "summary": "Walks the block tree, validates each block against its component, and gives components a render context.",
+      "source": {
+        "file": "src/render/engine.ts",
+        "symbol": "createEngine.renderBlock"
+      }
+    },
+    "code": {
+      "label": "code.ts",
+      "kind": "module",
+      "parent": "render",
+      "summary": "Reads source files, slices line ranges and highlights them with Shiki at build time.",
+      "source": {
+        "file": "src/render/code.ts",
+        "symbol": "createCodeRenderer"
+      }
+    },
+    "markdown": {
+      "label": "markdown.ts",
+      "kind": "module",
+      "parent": "render",
+      "summary": "Markdown with one addition: `[[entity-id]]` becomes an interactive reference."
+    },
+    "panels": {
+      "label": "entity-panels.ts",
+      "kind": "module",
+      "parent": "render",
+      "summary": "Pre-renders a details panel for every entity: summary, source and connections."
+    },
+    "page": {
+      "label": "page.ts",
+      "kind": "module",
+      "parent": "render",
+      "summary": "The page shell: top bar, table of contents, hero, detail panel, and the CSS and scripts of only the components actually used.",
+      "source": {
+        "file": "src/render/page.ts",
+        "symbol": "renderPage"
+      }
+    },
+    "assets": {
+      "label": "assets",
+      "kind": "folder",
+      "summary": "Plain CSS and JavaScript inlined into every page."
+    },
+    "theme": {
+      "label": "theme.css",
+      "kind": "style",
+      "parent": "assets",
+      "summary": "Design tokens (colours, type, radii) with automatic light and dark mode. Custom components reuse them."
+    },
+    "runtime": {
+      "label": "runtime.js",
+      "kind": "script",
+      "parent": "assets",
+      "summary": "Browser behaviour shared by all components: linked highlighting, the details panel, focus spotlighting and the table of contents."
+    },
+    "elk": {
+      "label": "ELK",
+      "kind": "library",
+      "summary": "Eclipse Layout Kernel, used to lay out graphs at build time so pages ship plain SVG."
+    },
+    "shiki": {
+      "label": "Shiki",
+      "kind": "library",
+      "summary": "The syntax highlighter used by VS Code's themes; runs at build time."
+    },
+    "zod": {
+      "label": "Zod",
+      "kind": "library",
+      "summary": "Schema validation; also produces the JSON Schema agents can read."
+    }
+  },
+  "relations": [
+    {
+      "from": "agent",
+      "to": "doc",
+      "kind": "writes"
+    },
+    {
+      "from": "agent",
+      "to": "cli",
+      "kind": "runs"
+    },
+    {
+      "from": "cli",
+      "to": "build",
+      "kind": "calls"
+    },
+    {
+      "from": "build",
+      "to": "schema",
+      "kind": "parses with"
+    },
+    {
+      "from": "build",
+      "to": "model",
+      "kind": "indexes with"
+    },
+    {
+      "from": "build",
+      "to": "registry",
+      "kind": "loads"
+    },
+    {
+      "from": "build",
+      "to": "engine",
+      "kind": "renders with"
+    },
+    {
+      "from": "build",
+      "to": "panels",
+      "kind": "calls"
+    },
+    {
+      "from": "build",
+      "to": "page",
+      "kind": "assembles with"
+    },
+    {
+      "from": "registry",
+      "to": "builtin",
+      "kind": "includes"
+    },
+    {
+      "from": "builtin",
+      "to": "define",
+      "kind": "implements"
+    },
+    {
+      "from": "engine",
+      "to": "registry",
+      "kind": "looks up"
+    },
+    {
+      "from": "engine",
+      "to": "markdown",
+      "kind": "calls"
+    },
+    {
+      "from": "engine",
+      "to": "code",
+      "kind": "calls"
+    },
+    {
+      "from": "engine",
+      "to": "elk",
+      "kind": "lays out with"
+    },
+    {
+      "from": "code",
+      "to": "shiki",
+      "kind": "highlights with"
+    },
+    {
+      "from": "schema",
+      "to": "zod",
+      "kind": "built on"
+    },
+    {
+      "from": "page",
+      "to": "theme",
+      "kind": "inlines"
+    },
+    {
+      "from": "page",
+      "to": "runtime",
+      "kind": "inlines"
+    },
+    {
+      "from": "build",
+      "to": "output",
+      "kind": "produces"
+    },
+    {
+      "from": "reader",
+      "to": "output",
+      "kind": "opens"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stats",
+      "items": [
+        {
+          "value": 1,
+          "label": "HTML file out",
+          "hint": "everything inlined, works offline"
+        },
+        {
+          "value": 20,
+          "label": "built-in components",
+          "hint": "plus any the agent writes"
+        },
+        {
+          "value": 4,
+          "label": "CLI commands",
+          "hint": "render · validate · components · schema"
+        },
+        {
+          "value": 0,
+          "label": "things for readers to install"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "The big idea",
+      "summary": "Agents are good at understanding code and at producing structured data. They are inconsistent at visual design. So we split the job in two.",
+      "children": [
+        {
+          "type": "timeline",
+          "layout": "across",
+          "numbered": true,
+          "items": [
+            {
+              "title": "Analyse",
+              "text": "The agent explores the codebase with its usual tools.",
+              "entity": "agent"
+            },
+            {
+              "title": "Describe",
+              "text": "It writes entities, relations and blocks into a JSON document.",
+              "entity": "doc"
+            },
+            {
+              "title": "Validate",
+              "text": "`vizx validate` reports precise, fixable issues.",
+              "entity": "cli"
+            },
+            {
+              "title": "Render",
+              "text": "`vizx render` lays out, highlights and inlines everything.",
+              "entity": "build"
+            },
+            {
+              "title": "Read",
+              "text": "Anyone opens the file in a browser.",
+              "entity": "output"
+            }
+          ]
+        },
+        {
+          "type": "columns",
+          "children": [
+            {
+              "type": "callout",
+              "tone": "key",
+              "title": "The split",
+              "text": "The **agent** decides *what* to say and *in which order*. The **toolkit** decides *how it looks*."
+            },
+            {
+              "type": "callout",
+              "tone": "tip",
+              "title": "No fixed templates",
+              "text": "There is no \"architecture view\" or \"code-path view\". The agent composes blocks freely, and can write new components when none fit."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "The main pieces",
+      "summary": "The source is split by responsibility: a data model, a component vocabulary and a renderer, with one orchestrator on top.",
+      "children": [
+        {
+          "type": "cards",
+          "items": [
+            {
+              "entity": "document"
+            },
+            {
+              "entity": "components"
+            },
+            {
+              "entity": "render"
+            },
+            {
+              "entity": "assets"
+            }
+          ]
+        },
+        {
+          "type": "graph",
+          "entities": [
+            "cli",
+            "build",
+            "document",
+            "components",
+            "render",
+            "assets",
+            "elk",
+            "shiki",
+            "zod"
+          ],
+          "caption": "High-level architecture. Relations between files are lifted to their folders. Hover a box to trace its connections, click it for details."
+        },
+        {
+          "type": "details",
+          "title": "Show every file",
+          "children": [
+            {
+              "type": "tree",
+              "roots": [
+                "src",
+                "assets"
+              ],
+              "collapsedBelow": 3
+            },
+            {
+              "type": "graph",
+              "entities": [
+                "cli",
+                "build",
+                "document",
+                "schema",
+                "model",
+                "components",
+                "define",
+                "registry",
+                "builtin",
+                "render",
+                "engine",
+                "code",
+                "markdown",
+                "panels",
+                "page"
+              ],
+              "direction": "down",
+              "caption": "File-level dependencies inside `src`."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Following one render",
+      "summary": "What happens between typing `vizx render explainer.json` and getting a page? Scroll through the steps; the diagram follows along.",
+      "children": [
+        {
+          "type": "steps",
+          "visual": {
+            "type": "graph",
+            "entities": [
+              "cli",
+              "build",
+              "schema",
+              "model",
+              "registry",
+              "engine",
+              "code",
+              "markdown",
+              "page",
+              "panels",
+              "shiki",
+              "elk"
+            ],
+            "nest": false,
+            "direction": "down",
+            "edgeLabels": false
+          },
+          "steps": [
+            {
+              "title": "The CLI hands off",
+              "text": "[[cli]] does nothing clever: it calls [[build]] and decides what to do with the result. Without `--force`, any issue means nothing is written.",
+              "focus": [
+                "cli",
+                "build"
+              ]
+            },
+            {
+              "title": "Parse and check the document",
+              "text": "[[build]] reads the JSON and validates it against the [[schema]]. Then [[model]] checks cross-references: every `parent`, `from` and `to` must name a real entity.",
+              "focus": [
+                "build",
+                "schema",
+                "model"
+              ]
+            },
+            {
+              "title": "Gather the components",
+              "text": "[[registry]] starts from the built-ins and imports each custom module listed in the document. A module that doesn't look like a component is reported, not trusted.",
+              "focus": [
+                "build",
+                "registry"
+              ]
+            },
+            {
+              "title": "Walk the blocks",
+              "text": "[[engine]] visits each block, finds its component and validates the block's props against that component's schema. Errors carry the exact block path.",
+              "focus": [
+                "build",
+                "engine",
+                "registry"
+              ]
+            },
+            {
+              "title": "Render code and diagrams",
+              "text": "Components ask the context for help. Code goes to [[code]], which highlights it with [[shiki]]; graphs are laid out by [[elk]]. Both happen at build time, so the page stays light.",
+              "focus": [
+                "engine",
+                "code",
+                "shiki",
+                "elk",
+                "markdown"
+              ]
+            },
+            {
+              "title": "Assemble one file",
+              "text": "[[page]] wraps everything in the shell and inlines [[theme]], [[runtime]] and the CSS and scripts of only the components that were used.",
+              "focus": [
+                "build",
+                "page",
+                "panels"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "prose",
+          "text": "The same story, in time order:"
+        },
+        {
+          "type": "sequence",
+          "participants": [
+            "cli",
+            "build",
+            "registry",
+            "engine",
+            "code",
+            "page"
+          ],
+          "messages": [
+            {
+              "from": "cli",
+              "to": "build",
+              "label": "buildExplainer(path)",
+              "note": "The CLI only parses arguments and delegates."
+            },
+            {
+              "from": "build",
+              "to": "build",
+              "label": "parse + validate JSON",
+              "note": "JSON syntax, the document schema, then cross-references."
+            },
+            {
+              "from": "build",
+              "to": "registry",
+              "label": "loadRegistry(components)",
+              "note": "Built-ins plus the document's custom modules."
+            },
+            {
+              "from": "registry",
+              "to": "build",
+              "kind": "return",
+              "label": "registry"
+            },
+            {
+              "from": "build",
+              "to": "engine",
+              "label": "renderBlocks(blocks)",
+              "note": "Blocks render in parallel; each gets a context scoped to its path."
+            },
+            {
+              "from": "engine",
+              "to": "engine",
+              "label": "validate props",
+              "note": "Each block's props are checked against its component's schema."
+            },
+            {
+              "from": "engine",
+              "to": "code",
+              "label": "code(source)",
+              "note": "File reads and highlighting are cached per build."
+            },
+            {
+              "from": "code",
+              "to": "engine",
+              "kind": "return",
+              "label": "highlighted html"
+            },
+            {
+              "from": "build",
+              "to": "page",
+              "label": "renderPage(parts)",
+              "note": "Only the CSS and scripts of components actually used are inlined."
+            },
+            {
+              "from": "build",
+              "to": "cli",
+              "kind": "return",
+              "label": "{ html, issues }",
+              "note": "Issues are always returned; the CLI decides whether to write."
+            }
+          ],
+          "caption": "The same journey as a sequence diagram. Hover a message or a note to pair them."
+        },
+        {
+          "type": "steps",
+          "visual": {
+            "type": "code",
+            "source": {
+              "file": "src/render/engine.ts",
+              "symbol": "createEngine.renderBlock"
+            },
+            "title": "renderBlock() in src/render/engine.ts"
+          },
+          "steps": [
+            {
+              "title": "Every block needs a type",
+              "text": "A block is any object with a `type`. Everything else is props.",
+              "lines": {
+                "match": "if (typeof block !== \"object\"",
+                "lines": 5
+              }
+            },
+            {
+              "title": "Find the component",
+              "text": "Unknown types are reported with a suggestion, e.g. `unknown component \"grpah\" (did you mean \"graph\"?)`.",
+              "lines": {
+                "match": "const component = registry.get(type);",
+                "lines": 5
+              }
+            },
+            {
+              "title": "Validate props",
+              "text": "The component's own schema checks the props. Because built-ins use strict schemas, typos in prop names are caught too.",
+              "lines": {
+                "match": "const parsed = component.props.safeParse(props);",
+                "lines": 6
+              }
+            },
+            {
+              "title": "Register in the outline",
+              "text": "Components can declare an outline title. That is how sections end up in the table of contents, and custom components can do the same.",
+              "lines": {
+                "match": "const title = component.outline?.(parsed.data);",
+                "lines": 11
+              }
+            },
+            {
+              "title": "Render, safely",
+              "text": "The component renders with a context scoped to its path. If a custom component throws, the failure becomes an issue instead of a crash.",
+              "lines": {
+                "match": "const output = await component.render(",
+                "lines": 8
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "The document model",
+      "summary": "One shared vocabulary of things and connections, many ways to show it.",
+      "children": [
+        {
+          "type": "columns",
+          "minWidth": 300,
+          "children": [
+            {
+              "type": "prose",
+              "text": "An explainer has three layers:\n\n- **Entities**: anything worth naming, such as a file, a function, a service or a concept. Each has a short plain-language `summary`, optional `details` and an optional `source`.\n- **Relations**: typed connections such as *calls*, *imports* or *reads*.\n- **Blocks**: the presentation, a tree of components that refer to entities by id.\n\nBecause blocks only *refer* to entities, the same [[engine]] can appear in a graph, a sequence diagram, a card and a sentence, and hovering it lights up every one of them."
+            },
+            {
+              "type": "code",
+              "entity": "schema",
+              "maxLines": 22
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Field",
+            "What it's for"
+          ],
+          "rows": [
+            [
+              "`title`, `subtitle`, `summary`",
+              "The hero at the top of the page"
+            ],
+            [
+              "`root`",
+              "Where `source.file` paths start, usually the repository root"
+            ],
+            [
+              "`repository`",
+              "Adds *View source* links to code blocks"
+            ],
+            [
+              "`components`",
+              "Paths to custom component modules"
+            ],
+            [
+              "`entities`, `relations`",
+              "The shared data"
+            ],
+            [
+              "`blocks`",
+              "The page itself"
+            ]
+          ],
+          "caption": "Top-level document fields"
+        },
+        {
+          "type": "callout",
+          "tone": "tip",
+          "title": "Point at code by name",
+          "text": "A source like `{ \"file\": \"src/render/engine.ts\", \"symbol\": \"createEngine.renderBlock\" }` is resolved to the right lines at build time, so it keeps working when the code moves. `vizx symbols <file>` lists what can be named."
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Extending it",
+      "summary": "When no built-in fits, the agent isn't stuck writing a whole page by hand.",
+      "children": [
+        {
+          "type": "tabs",
+          "tabs": [
+            {
+              "label": "Custom component",
+              "children": [
+                {
+                  "type": "prose",
+                  "text": "A component is a small `.mjs` file listed under `components`. It receives the toolkit (`z`, `html`, `defineComponent`), so it needs no imports, and it gets the same render context as the built-ins: entity lookup, markdown, code highlighting, layout and theme colours. This bar chart is one:"
+                },
+                {
+                  "type": "bars",
+                  "unit": "lines",
+                  "items": [
+                    {
+                      "entity": "components",
+                      "value": 1751
+                    },
+                    {
+                      "entity": "render",
+                      "value": 483
+                    },
+                    {
+                      "entity": "assets",
+                      "value": 384
+                    },
+                    {
+                      "entity": "document",
+                      "value": 190
+                    }
+                  ],
+                  "caption": "The component vocabulary is most of the code; the document model is the smallest part."
+                },
+                {
+                  "type": "code",
+                  "source": {
+                    "file": "examples/vizexplainer/components/bars.mjs",
+                    "lines": [
+                      3,
+                      32
+                    ]
+                  },
+                  "title": "examples/vizexplainer/components/bars.mjs",
+                  "maxLines": 20
+                }
+              ]
+            },
+            {
+              "label": "Raw HTML",
+              "children": [
+                {
+                  "type": "prose",
+                  "text": "For a one-off, the `html` block inserts markup and CSS as they are. Theme variables keep it consistent:"
+                },
+                {
+                  "type": "html",
+                  "html": "<div class=\"demo-swatches\"><span style=\"--c: var(--vx-accent)\">accent</span><span style=\"--c: var(--vx-accent-2)\">accent-2</span><span style=\"--c: var(--vx-green)\">green</span><span style=\"--c: var(--vx-amber)\">amber</span></div>",
+                  "css": ".demo-swatches { display: flex; gap: .6rem; flex-wrap: wrap; } .demo-swatches span { padding: .5rem .9rem; border-radius: 10px; font: 600 .85rem var(--vx-mono); color: var(--c); background: color-mix(in oklab, var(--c) 12%, var(--vx-surface)); border: 1px solid color-mix(in oklab, var(--c) 30%, transparent); }"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "details",
+          "title": "Why lay out graphs at build time?",
+          "children": [
+            {
+              "type": "prose",
+              "text": "Laying out with [[elk]] while building means the page ships finished SVG: nothing to compute when it opens, no large libraries to download, and it prints and displays the same everywhere. The browser only adds small touches such as panning, zooming and highlighting."
+            }
+          ]
+        },
+        {
+          "type": "quiz",
+          "questions": [
+            {
+              "question": "An agent needs a diagram type that no built-in component offers. What should it do first?",
+              "options": [
+                {
+                  "text": "Write the whole page in raw HTML",
+                  "explanation": "That throws away validation, theming and interactivity."
+                },
+                {
+                  "text": "Write a small custom component module",
+                  "correct": true,
+                  "explanation": "It gets the same render context and theme as the built-ins."
+                },
+                {
+                  "text": "Give up on the diagram"
+                }
+              ]
+            },
+            {
+              "question": "Where are graphs laid out?",
+              "options": [
+                {
+                  "text": "In the reader's browser, when the page opens"
+                },
+                {
+                  "text": "At build time, so the page ships finished SVG",
+                  "correct": true
+                }
+              ],
+              "explanation": "[[elk]] runs during `vizx render`; the browser only adds panning, zooming and highlighting."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Words used on this page",
+      "children": [
+        {
+          "type": "glossary",
+          "terms": [
+            {
+              "term": "Entity",
+              "definition": "Anything worth naming in an explainer: a file, a function, a service, a concept."
+            },
+            {
+              "term": "Relation",
+              "definition": "A typed connection between two entities, such as *calls* or *imports*."
+            },
+            {
+              "term": "Block",
+              "definition": "One piece of the page, rendered by a component and referring to entities by id."
+            },
+            {
+              "term": "Component",
+              "definition": "The code that turns one kind of block into HTML. Built-in or written by the agent."
+            }
+          ],
+          "entities": [
+            "elk",
+            "shiki",
+            "zod"
+          ]
+        }
+      ]
+    }
+  ]
+}

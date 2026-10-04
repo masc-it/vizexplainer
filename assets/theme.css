@@ -1,0 +1,204 @@
+/* vizexplainer theme. Custom components should use these variables so they match light and dark mode. */
+:root {
+  color-scheme: light dark;
+  --vx-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --vx-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  /* Reading column: about 75 characters of body text. Text blocks use it; figures use the full page width. */
+  --vx-measure: 45rem;
+  --vx-page: 1360px;
+  --vx-topbar: 52px;
+  --vx-panel-width: 420px;
+  --vx-radius: 12px;
+  --vx-radius-lg: 16px;
+  --vx-code-line: 21.5px;
+
+  --vx-bg: light-dark(#f8f8f6, #0c0d11);
+  --vx-surface: light-dark(#ffffff, #14151b);
+  --vx-surface-2: light-dark(#f2f2ef, #1b1c23);
+  --vx-text: light-dark(#18181b, #ececf1);
+  --vx-muted: light-dark(#5c5c68, #a3a3b0);
+  --vx-faint: light-dark(#9898a4, #6b6b78);
+  --vx-border: light-dark(#e6e5e1, #25262e);
+  --vx-border-strong: light-dark(#d2d1cc, #373844);
+  --vx-accent: light-dark(#5b4fe9, #a29bff);
+  --vx-accent-2: light-dark(#d6428a, #f08bc0);
+  --vx-accent-soft: light-dark(#efedff, #201e3f);
+  --vx-on-accent: light-dark(#ffffff, #0c0d11);
+  --vx-green: light-dark(#15803d, #6ee7a0);
+  --vx-amber: light-dark(#b45309, #fbbf4d);
+  --vx-red: light-dark(#cf222e, #ff7b72);
+  --vx-edge: light-dark(#b4b3be, #4b4c5a);
+  --vx-edge-strong: light-dark(#86859a, #737487);
+  --vx-grid: light-dark(#e8e7e2, #1d1e26);
+  --vx-code-bg: light-dark(#fcfcfb, #101116);
+  --vx-code-border: var(--vx-border);
+  --vx-shadow-sm: 0 1px 2px light-dark(rgb(20 20 30 / .05), rgb(0 0 0 / .4));
+  --vx-shadow: 0 10px 30px -10px light-dark(rgb(30 30 60 / .22), rgb(0 0 0 / .7)), 0 2px 6px light-dark(rgb(0 0 0 / .05), rgb(0 0 0 / .3));
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* Entity hues: `vx-hue-N` sets --hue-fg (text, strokes) and --hue-bg (fills). */
+.vx-hue-0 { --hue-fg: light-dark(#52525b, #b4b4bd); --hue-bg: light-dark(#f0f0f2, #24242a); }
+.vx-hue-1 { --hue-fg: light-dark(#4f46e5, #a5b4fc); --hue-bg: light-dark(#eceeff, #1e2040); }
+.vx-hue-2 { --hue-fg: light-dark(#0d8075, #5eead4); --hue-bg: light-dark(#e1f5f1, #0f2f2c); }
+.vx-hue-3 { --hue-fg: light-dark(#b45309, #fcd34d); --hue-bg: light-dark(#fcf1dc, #33280f); }
+.vx-hue-4 { --hue-fg: light-dark(#be185d, #f9a8d4); --hue-bg: light-dark(#fce8f1, #3a1529); }
+.vx-hue-5 { --hue-fg: light-dark(#0369a1, #7dd3fc); --hue-bg: light-dark(#e2f2fb, #0e293a); }
+.vx-hue-6 { --hue-fg: light-dark(#7c3aed, #c4b5fd); --hue-bg: light-dark(#f0e9fe, #2a1d46); }
+.vx-hue-7 { --hue-fg: light-dark(#15803d, #86efac); --hue-bg: light-dark(#e3f5e8, #11301c); }
+.vx-hue-8 { --hue-fg: light-dark(#c2410c, #fdba74); --hue-bg: light-dark(#fdece2, #3a2010); }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--vx-topbar) + 1.5rem); overflow-x: clip; }
+body { margin: 0; overflow-x: clip; background: var(--vx-bg); color: var(--vx-text); font: 16px/1.65 var(--vx-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+::selection { background: color-mix(in oklab, var(--vx-accent) 25%, transparent); }
+:focus-visible { outline: 2px solid var(--vx-accent); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3, h4 { line-height: 1.25; letter-spacing: -0.015em; }
+
+/* Top bar */
+.vx-topbar { position: fixed; inset: 0 0 auto 0; height: var(--vx-topbar); z-index: 30; display: flex; align-items: center; gap: 0.75rem; padding: 0 1rem 0 1.25rem; background: color-mix(in oklab, var(--vx-bg) 82%, transparent); backdrop-filter: saturate(1.6) blur(14px); -webkit-backdrop-filter: saturate(1.6) blur(14px); border-bottom: 1px solid var(--vx-border); }
+.vx-topbar-title { flex: none; max-width: 16rem; font-weight: 650; font-size: 0.92rem; color: var(--vx-text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 720px) { .vx-topbar-title { display: none; } .vx-sections { margin-left: -0.5rem; } }
+/* Section row: each link's underline is that section's reading progress. */
+.vx-sections { flex: 1; min-width: 0; align-self: stretch; display: flex; gap: 0.15rem; overflow-x: auto; scrollbar-width: none; margin: 0 0.5rem; }
+.vx-sections::-webkit-scrollbar { display: none; }
+/* Links grow to share the bar, so the underlines form one segmented progress bar; they never shrink below their label, so too many sections scroll. */
+.vx-sections a { position: relative; flex: 1 0 auto; display: flex; align-items: center; justify-content: center; padding: 0 0.65rem; font-size: 0.84rem; color: var(--vx-muted); text-decoration: none; white-space: nowrap; }
+.vx-sections a:hover { color: var(--vx-text); }
+.vx-sections a.vx-active { color: var(--vx-text); }
+.vx-sections a i { position: absolute; left: 0.15rem; right: 0.15rem; bottom: 0; height: 2px; background: var(--vx-border); }
+.vx-sections a i::after { content: ""; position: absolute; inset: 0; background: var(--vx-accent); transform-origin: left; transform: scaleX(var(--vx-read, 0)); }
+.vx-icon-btn { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--vx-muted); cursor: pointer; }
+.vx-icon-btn:hover { background: var(--vx-surface-2); color: var(--vx-text); border-color: var(--vx-border); }
+.vx-icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.vx-moon { display: none; }
+:root[data-theme="dark"] .vx-moon { display: inline; } :root[data-theme="dark"] .vx-sun { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vx-moon { display: inline; } :root:not([data-theme="light"]) .vx-sun { display: none; } }
+
+/* Layout */
+.vx-layout { padding-top: var(--vx-topbar); }
+.vx-main { min-width: 0; width: 100%; max-width: var(--vx-page); margin: 0 auto; padding: 0 3rem 3rem; }
+.vx-stack { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
+.vx-stack > * { min-width: 0; }
+.vx-content { gap: 1.5rem; }
+/* Page flow (the page body and section bodies): blocks marked `vx-narrow` sit in the centred reading column,
+   everything else spans the page. Inside boxes such as details, tabs and columns, text simply fills its box. */
+.vx-flow > .vx-b > .vx-narrow, .vx-flow > .vx-b > .vx-section > .vx-narrow { width: 100%; max-width: var(--vx-measure); margin-inline: auto; }
+
+@media (max-width: 720px) { .vx-main { padding: 0 1.1rem 2rem; } }
+
+/* Hero */
+.vx-hero { position: relative; max-width: var(--vx-measure); margin-inline: auto; padding: 4.5rem 0 1.5rem; }
+.vx-hero h1 { margin: 0; font-size: clamp(2.2rem, 4.5vw, 3.4rem); font-weight: 760; letter-spacing: -0.04em; line-height: 1.06; text-wrap: balance; }
+.vx-subtitle { margin: 0.9rem 0 0; font-size: clamp(1.1rem, 2vw, 1.35rem); color: var(--vx-muted); line-height: 1.45; text-wrap: balance; }
+.vx-hero-summary { margin-top: 1.5rem; font-size: 1.06rem; }
+.vx-hero-hint { margin-top: 1.5rem; font-size: 0.84rem; color: var(--vx-faint); }
+.vx-hero-hint .vx-ref { cursor: default; }
+
+/* Prose */
+.vx-prose { max-width: var(--vx-measure); overflow-wrap: break-word; text-wrap: pretty; }
+.vx-prose > :first-child { margin-top: 0; } .vx-prose > :last-child { margin-bottom: 0; }
+.vx-prose p { margin: 0.7em 0; }
+.vx-prose ul, .vx-prose ol { padding-left: 1.35em; margin: 0.6em 0; }
+.vx-prose li { margin: 0.25em 0; } .vx-prose li::marker { color: var(--vx-faint); }
+.vx-prose a { color: var(--vx-accent); text-underline-offset: 3px; }
+.vx-prose strong { font-weight: 650; }
+.vx-prose h3 { font-size: 1.12rem; margin: 1.4em 0 0.4em; } .vx-prose h4 { font-size: 1rem; margin: 1.2em 0 0.3em; }
+.vx-prose blockquote { margin: 1em 0; padding: 0.1em 1em; border-left: 3px solid var(--vx-border-strong); color: var(--vx-muted); }
+:not(pre) > code { font-family: var(--vx-mono); font-size: 0.86em; padding: 0.12em 0.38em; border-radius: 5px; background: var(--vx-surface-2); border: 1px solid var(--vx-border); }
+.vx-prose pre { font-family: var(--vx-mono); font-size: 0.85rem; padding: 0.9rem 1rem; border-radius: var(--vx-radius); background: var(--vx-code-bg); border: 1px solid var(--vx-border); overflow-x: auto; }
+.vx-prose hr { border: 0; border-top: 1px solid var(--vx-border); margin: 2em 0; }
+.vx-prose img { max-width: 100%; border-radius: var(--vx-radius); }
+
+/* Entity references and shared bits */
+.vx-ref { --_fg: var(--hue-fg, var(--vx-accent)); --_bg: var(--hue-bg, var(--vx-accent-soft)); color: var(--_fg); background: color-mix(in oklab, var(--_bg) 60%, transparent); font-weight: 560; padding: 0.02em 0.28em; border-radius: 5px; box-shadow: inset 0 -1.5px 0 color-mix(in oklab, var(--_fg) 45%, transparent); cursor: pointer; transition: background .15s, box-shadow .15s; }
+.vx-ref:hover, .vx-ref.vx-linked { background: var(--_bg); box-shadow: inset 0 -2px 0 var(--_fg); }
+.vx-ref-missing { color: var(--vx-amber); text-decoration: wavy underline; }
+.vx-badge { display: inline-block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--hue-fg, var(--vx-muted)); background: var(--hue-bg, var(--vx-surface-2)); padding: 0.18rem 0.55rem; border-radius: 999px; line-height: 1.4; }
+.vx-chip { display: inline-flex; align-items: center; font-family: var(--vx-mono); font-size: 0.8rem; font-weight: 550; padding: 0.18rem 0.55rem; border-radius: 7px; background: var(--hue-bg); color: var(--hue-fg); border: 1px solid transparent; cursor: pointer; }
+.vx-chip:hover, .vx-chip.vx-linked { border-color: color-mix(in oklab, var(--hue-fg) 50%, transparent); }
+.vx-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.vx-marker { display: inline-grid; place-items: center; flex: none; min-width: 1.3rem; height: 1.3rem; padding: 0 0.3rem; border-radius: 999px; background: var(--vx-accent); color: var(--vx-on-accent); font: 700 0.7rem/1 var(--vx-sans); }
+.vx-figure { margin: 0; }
+.vx-figure figcaption { max-width: var(--vx-measure); margin: 0.65rem auto 0; text-align: center; font-size: 0.87rem; color: var(--vx-muted); text-wrap: balance; }
+/* Numbered notes beside or under a figure (code annotations, sequence notes). */
+.vx-notes { list-style: none; margin: 0; padding: 0.5rem; display: grid; gap: 2px; align-content: start; }
+.vx-notes li { display: flex; gap: 0.65rem; align-items: flex-start; padding: 0.5rem 0.6rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; cursor: default; }
+.vx-notes li:hover, .vx-notes li.vx-active { background: var(--vx-accent-soft); }
+.vx-notes .vx-marker { margin-top: 0.1rem; }
+.vx-notes .vx-prose { min-width: 0; }
+.vx-focus-mode .vx-card:not(.vx-focused), .vx-focus-mode .vx-tree-label:not(.vx-focused) { opacity: .4; }
+.vx-focus-mode .vx-card.vx-focused { border-color: var(--hue-fg); box-shadow: var(--vx-shadow); }
+
+/* Diagrams (shared by graph, sequence, state and custom SVG components) */
+.vx-canvas { min-width: 0; padding: 1rem; border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); background: var(--vx-surface); overflow: auto; }
+svg[data-vx-fit] { display: block; margin: 0 auto; width: 100%; height: auto; overflow: visible; font-family: var(--vx-sans); }
+.vx-node { cursor: pointer; transition: opacity .25s; outline: none; }
+.vx-node-box { fill: color-mix(in oklab, var(--hue-bg, var(--vx-accent-soft)) 70%, var(--vx-surface)); stroke: color-mix(in oklab, var(--hue-fg, var(--vx-accent)) 55%, transparent); stroke-width: 1.25; transition: stroke .15s, fill .15s; }
+.vx-node-label { fill: var(--vx-text); font-weight: 600; text-anchor: middle; }
+.vx-node-kind { fill: var(--hue-fg, var(--vx-accent)); font-weight: 650; letter-spacing: .06em; text-anchor: middle; text-transform: uppercase; }
+.vx-node:hover .vx-node-box, .vx-node.vx-linked .vx-node-box, .vx-node:focus-visible .vx-node-box, .vx-node.vx-focused .vx-node-box { stroke: var(--hue-fg, var(--vx-accent)); stroke-width: 2; fill: var(--hue-bg, var(--vx-accent-soft)); }
+.vx-edge path { fill: none; stroke: var(--vx-edge); stroke-width: 1.5; transition: stroke .2s, opacity .25s; }
+.vx-edge.vx-edge-on path { stroke: var(--vx-accent); stroke-width: 2.25; }
+.vx-edge-label { transition: opacity .25s; }
+.vx-edge-label rect { fill: var(--vx-surface); stroke: var(--vx-border); }
+.vx-edge-label text { fill: var(--vx-muted); font-weight: 550; text-anchor: middle; dominant-baseline: central; }
+.vx-edge-label.vx-edge-on text { fill: var(--vx-accent); }
+[data-vx-diagram].vx-hovering .vx-edge:not(.vx-edge-on), [data-vx-diagram].vx-hovering .vx-edge-label:not(.vx-edge-on) { opacity: .25; }
+.vx-focus-mode .vx-node:not(.vx-focused) { opacity: .28; }
+.vx-focus-mode .vx-edge:not(.vx-edge-on), .vx-focus-mode .vx-edge-label:not(.vx-edge-on) { opacity: .15; }
+
+/* Code (shared by the code component and entity panels) */
+.vx-code { margin: 0; border: 1px solid var(--vx-code-border); border-radius: var(--vx-radius-lg); background: var(--vx-code-bg); overflow: hidden; box-shadow: var(--vx-shadow-sm); }
+.vx-code-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--vx-code-border); font-size: 0.8rem; color: var(--vx-muted); background: color-mix(in oklab, var(--vx-surface-2) 50%, transparent); }
+.vx-code-dots { display: inline-flex; gap: 5px; } .vx-code-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--vx-border-strong); }
+.vx-code-title { font-family: var(--vx-mono); color: var(--vx-text); font-weight: 550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.vx-code-lang { margin-left: auto; text-transform: uppercase; letter-spacing: .06em; font-size: 0.66rem; font-weight: 700; color: var(--vx-faint); }
+.vx-code-link { color: var(--vx-accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.vx-code-link:hover { text-decoration: underline; }
+.vx-code-title + .vx-code-link { margin-left: auto; }
+.vx-code-body { position: relative; max-height: calc(var(--vx-max-lines, 28) * var(--vx-code-line) + 1.5rem); overflow: auto; }
+.vx-code pre.shiki { margin: 0; padding: 0.75rem 0; background: transparent; font: 13px/var(--vx-code-line) var(--vx-mono); tab-size: 2; }
+.vx-code pre.shiki code { display: block; min-width: max-content; }
+.shiki, .shiki span { color: light-dark(var(--shiki-light), var(--shiki-dark)); }
+.vx-code .line { display: inline-block; width: 100%; position: relative; padding-right: 2.5rem; transition: opacity .25s, background .25s; }
+.vx-code .line::before { content: attr(data-line); display: inline-block; width: 3.4rem; padding-right: 1.1rem; text-align: right; color: var(--vx-faint); user-select: none; opacity: .7; }
+.vx-code .line > .vx-marker { position: absolute; left: calc(3.4rem - 1.1rem - 1.3rem); top: 50%; transform: translateY(-50%); color: var(--vx-on-accent); }
+.vx-code .line:has(> .vx-marker)::before { color: transparent; }
+.vx-code .line.vx-line-hl { background: color-mix(in oklab, var(--vx-accent) 9%, transparent); box-shadow: inset 3px 0 0 var(--vx-accent); }
+.vx-has-focus .line { opacity: .32; }
+.vx-has-focus .line.vx-line-focus { opacity: 1; background: color-mix(in oklab, var(--vx-accent) 11%, transparent); box-shadow: inset 3px 0 0 var(--vx-accent); }
+.vx-code-missing { margin: 0; padding: 1rem; color: var(--vx-amber); font: 13px var(--vx-mono); white-space: pre-wrap; }
+
+/* Entity detail panel */
+.vx-panel { position: fixed; z-index: 40; top: var(--vx-topbar); right: 0; bottom: 0; width: min(var(--vx-panel-width), 100vw); display: flex; flex-direction: column; background: var(--vx-surface); border-left: 1px solid var(--vx-border); box-shadow: var(--vx-shadow); transform: translateX(105%); transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
+.vx-panel.vx-panel-open { transform: none; }
+/* On wide screens the open panel takes its own column, so it never covers the page and can stay open. */
+@media (min-width: 1100px) {
+  body { transition: padding-right .28s cubic-bezier(.2, .8, .2, 1); }
+  body.vx-panel-docked { padding-right: var(--vx-panel-width); }
+  body.vx-panel-docked .vx-panel { box-shadow: none; }
+}
+.vx-panel-bar { display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--vx-border); }
+.vx-panel-bar-label { flex: 1; font-size: 0.75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--vx-faint); padding-left: 0.5rem; }
+.vx-panel-content { overflow-y: auto; padding: 1.4rem 1.5rem 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.vx-panel-content > * { flex-shrink: 0; }
+.vx-panel-content h2 { margin: 0.45rem 0 0; font-size: 1.55rem; letter-spacing: -0.025em; }
+.vx-panel-content h3 { margin: 0.6rem 0 -0.3rem; font-size: 0.72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--vx-faint); }
+.vx-panel-id { font-family: var(--vx-mono); font-size: 0.78rem; color: var(--vx-faint); }
+.vx-panel-summary { font-size: 1.04rem; }
+.vx-panel-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; font-size: 0.8rem; color: var(--vx-faint); }
+.vx-rels { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+.vx-rels li { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; }
+.vx-rel-verb { color: var(--vx-muted); min-width: 7.5rem; font-size: 0.82rem; }
+
+.vx-footer { margin-top: 6rem; padding-top: 1.5rem; border-top: 1px solid var(--vx-border); font-size: 0.82rem; color: var(--vx-faint); text-align: center; }
+.vx-footer a { color: inherit; }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+@media print {
+  .vx-topbar, .vx-panel, .vx-graph-tools, .vx-graph-hint { display: none !important; }
+  .vx-layout { display: block; padding: 0; } body { background: #fff; }
+}

@@ -1,0 +1,28 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tgz
+
+# Scratch space for probes and previews
+data.tmp/
+
+# Rendered pages (regenerate with `vizx render`)
+*.html
+!assets/**/*.html
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local environment
+.env
+.env.*
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp

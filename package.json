@@ -1,0 +1,38 @@
+{
+  "name": "vizexplainer",
+  "version": "0.1.0",
+  "description": "Toolkit for AI agents to compose visual explainers of code and codebases as self-contained HTML",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && chmod +x dist/cli.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "vizx": "node src/cli.ts"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "elkjs": "^0.12.0",
+    "marked": "^18.0.14",
+    "playwright-core": "^1.63.0",
+    "shiki": "^4.5.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "bin": {
+    "vizx": "dist/cli.js"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "assets",
+    "skill"
+  ],
+  "engines": {
+    "node": ">=22.18"
+  }
+}

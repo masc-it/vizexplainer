@@ -83,14 +83,14 @@ h1, h2, h3, h4 { line-height: 1.25; letter-spacing: -0.015em; }
 .vx-stack { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
 .vx-stack > * { min-width: 0; }
 .vx-content { gap: 1.5rem; }
-/* Page flow (the page body and section bodies): blocks marked `vx-narrow` sit in the centred reading column,
-   everything else spans the page. Inside boxes such as details, tabs and columns, text simply fills its box. */
-.vx-flow > .vx-b > .vx-narrow, .vx-flow > .vx-b > .vx-section > .vx-narrow { width: 100%; max-width: var(--vx-measure); margin-inline: auto; }
+/* Every block starts at the same left edge. Running text (marked `vx-narrow`) stops at the reading width;
+   boxes and figures span the page, so they all share one right edge too. */
+.vx-narrow { max-width: var(--vx-measure); }
 
 @media (max-width: 720px) { .vx-main { padding: 0 1.1rem 2rem; } }
 
 /* Hero */
-.vx-hero { position: relative; max-width: var(--vx-measure); margin-inline: auto; padding: 4.5rem 0 1.5rem; }
+.vx-hero { position: relative; max-width: var(--vx-measure); padding: 4.5rem 0 1.5rem; }
 .vx-hero h1 { margin: 0; font-size: clamp(2.2rem, 4.5vw, 3.4rem); font-weight: 760; letter-spacing: -0.04em; line-height: 1.06; text-wrap: balance; }
 .vx-subtitle { margin: 0.9rem 0 0; font-size: clamp(1.1rem, 2vw, 1.35rem); color: var(--vx-muted); line-height: 1.45; text-wrap: balance; }
 .vx-hero-summary { margin-top: 1.5rem; font-size: 1.06rem; }
@@ -122,7 +122,7 @@ h1, h2, h3, h4 { line-height: 1.25; letter-spacing: -0.015em; }
 .vx-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .vx-marker { display: inline-grid; place-items: center; flex: none; min-width: 1.3rem; height: 1.3rem; padding: 0 0.3rem; border-radius: 999px; background: var(--vx-accent); color: var(--vx-on-accent); font: 700 0.7rem/1 var(--vx-sans); }
 .vx-figure { margin: 0; }
-.vx-figure figcaption { max-width: var(--vx-measure); margin: 0.65rem auto 0; text-align: center; font-size: 0.87rem; color: var(--vx-muted); text-wrap: balance; }
+.vx-figure figcaption { max-width: var(--vx-measure); margin-top: 0.65rem; font-size: 0.87rem; color: var(--vx-muted); text-wrap: pretty; }
 /* Numbered notes beside or under a figure (code annotations, sequence notes). */
 .vx-notes { list-style: none; margin: 0; padding: 0.5rem; display: grid; gap: 2px; align-content: start; }
 .vx-notes li { display: flex; gap: 0.65rem; align-items: flex-start; padding: 0.5rem 0.6rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; cursor: default; }

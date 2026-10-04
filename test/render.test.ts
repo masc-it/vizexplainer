@@ -60,16 +60,17 @@ describe("page rendering", () => {
 });
 
 describe("page layout", () => {
-  it("puts text blocks in the reading column and lets figures span the page", async () => {
+  it("limits running text to the reading width and lets boxes and figures span the page", async () => {
     const result = await buildFixture(
       minimal([
         { type: "section", title: "Part", summary: "Lead", children: [{ type: "prose", text: "Body" }, { type: "callout", text: "Aside" }, { type: "stats", items: [{ value: 1, label: "x" }] }] },
       ]),
     );
-    expect(result.html).toContain('<div class="vx-content vx-stack vx-flow">');
     expect(result.html).toMatch(/<header class="vx-section-head vx-narrow">\s*<h2 class="vx-heading">Part<\/h2>/);
-    expect(result.html).toMatch(/<div class="vx-stack vx-flow"><div class="vx-b vx-b--prose" [^>]*><div class="vx-prose vx-narrow">/);
-    expect(result.html).toContain('class="vx-callout vx-callout--note vx-narrow"');
+    expect(result.html).toMatch(/<div class="vx-stack"><div class="vx-b vx-b--prose" [^>]*><div class="vx-prose vx-narrow">/);
+    expect(result.html).toContain('<aside class="vx-callout vx-callout--note vx-narrow">');
+    // Without a title the tone names itself, so the callout never reads as a plain paragraph.
+    expect(result.html).toMatch(/<div class="vx-callout-head">\s*<svg[^>]*>[\s\S]*?<\/svg>\s*<span>Note<\/span>/);
     expect(result.html).toMatch(/<div class="vx-stats">/);
   });
 

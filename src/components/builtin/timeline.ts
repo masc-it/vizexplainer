@@ -31,7 +31,7 @@ export const timeline = defineComponent({
     if (props.layout === "across" && props.items.length > ACROSS_ITEMS) {
       ctx.warn(`lays ${props.items.length} items across; beyond ${ACROSS_ITEMS} the columns get too narrow. Use the vertical layout or fewer items`);
     }
-    // Vertical timelines read like text and sit in the reading column; across ones are figures and use the page width.
+    // Vertical timelines read like text and stop at the reading width; across ones are figures and use the page width.
     return html`<figure class="vx-figure vx-timeline-figure${props.layout === "vertical" ? " vx-narrow" : ""}">
       <ol class="vx-timeline vx-timeline--${props.layout}${props.numbered ? " vx-timeline--numbered" : ""}">
         ${props.items.map(

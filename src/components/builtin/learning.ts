@@ -76,7 +76,8 @@ export const quiz = defineComponent({
     </div>`;
   },
   css: `
-.vx-quiz { padding: 1.1rem 1.25rem 1.25rem; border-radius: var(--vx-radius-lg); border: 1px solid var(--vx-border); background: var(--vx-surface); display: grid; gap: 1.25rem; }
+/* No outer box: the label and numbered questions carry it; only the answer buttons, which are controls, have borders. */
+.vx-quiz { display: grid; gap: 1.25rem; }
 .vx-quiz-title { font: 700 0.75rem var(--vx-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--vx-accent); }
 .vx-quiz-prompt { display: flex; gap: 0.6rem; font-weight: 600; }
 .vx-quiz-prompt > p { margin: 0.15rem 0 0; }
@@ -91,7 +92,7 @@ export const quiz = defineComponent({
 .vx-quiz-option.vx-right .vx-quiz-mark { border-color: var(--vx-green); background: var(--vx-green); box-shadow: inset 0 0 0 3px var(--vx-surface); }
 .vx-quiz-option.vx-wrong { border-color: var(--vx-red); background: color-mix(in oklab, var(--vx-red) 8%, var(--vx-surface)); }
 .vx-quiz-option.vx-wrong .vx-quiz-mark { border-color: var(--vx-red); background: var(--vx-red); box-shadow: inset 0 0 0 3px var(--vx-surface); }
-.vx-quiz-explanation { padding: 0.7rem 0.9rem; margin: 0.6rem 0 0 2.1rem; border-radius: 10px; background: var(--vx-surface-2); color: var(--vx-muted); }
+.vx-quiz-explanation { padding: 0.1rem 0 0.1rem 0.9rem; margin: 0.7rem 0 0 2.1rem; border-left: 3px solid var(--vx-border-strong); color: var(--vx-muted); }
 `,
   script: `
 document.querySelectorAll("[data-vx-question]").forEach((question) => {

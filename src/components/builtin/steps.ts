@@ -73,7 +73,9 @@ export const steps = defineComponent({
   },
   css: `
 .vx-steps { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 2rem; align-items: start; }
-.vx-steps-list { list-style: none; margin: 0; padding: 16vh 0 36vh; display: flex; flex-direction: column; gap: 26vh; }
+/* A step activates when it crosses a thin reading line (see the script), so a small gap is enough for one step at a time;
+   the script sizes the bottom padding so the visual stays pinned until the last step has reached that line. */
+.vx-steps-list { list-style: none; margin: 0; padding: 1rem 0 2rem; display: flex; flex-direction: column; gap: 10vh; }
 .vx-step { display: flex; gap: 0.9rem; position: relative; padding: 1rem 1.1rem 1.1rem; border-radius: var(--vx-radius); border: 1px solid transparent; cursor: pointer; opacity: .4; transition: opacity .3s, background .3s, border-color .3s, box-shadow .3s; }
 .vx-step-num { flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; background: var(--vx-surface); border: 1.5px solid var(--vx-border-strong); color: var(--vx-muted); position: relative; z-index: 1; transition: all .25s; }
 .vx-step-title { font-weight: 650; font-size: 1.04rem; margin: 0.2rem 0 0.35rem; }
@@ -88,7 +90,7 @@ export const steps = defineComponent({
   .vx-steps-visual { grid-row: 1; top: var(--vx-topbar); z-index: 2; background: var(--vx-bg); padding: 0.5rem 0; }
   .vx-steps-pin { max-height: 46vh; overflow: hidden; }
   .vx-steps-pin .vx-code-body { max-height: 36vh; }
-  .vx-steps-list { padding: 2rem 0 24vh; gap: 18vh; }
+  .vx-steps-list { gap: 8vh; }
 }
 `,
   script: `
@@ -103,10 +105,28 @@ document.querySelectorAll("[data-vx-steps]").forEach((root) => {
     const [start, end] = (step.dataset.lines || "").split("-").map(Number);
     vx.setFocus(visual, { entities: (step.dataset.focus || "").split(" ").filter(Boolean), lines: start ? [start, end] : null });
   };
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e) => { if (e.isIntersecting) activate(e.target); });
-  }, { rootMargin: "-45% 0px -50% 0px" });
-  items.forEach((step) => { observer.observe(step); step.addEventListener("click", () => activate(step)); });
+  // The step crossing the reading line is active: 25% down the window, or just below the pinned visual on narrow screens.
+  const narrow = matchMedia("(max-width: 900px)");
+  const pin = root.querySelector(".vx-steps-visual");
+  const list = root.querySelector(".vx-steps-list");
+  let observer = null;
+  const setup = () => {
+    const line = narrow.matches ? 0.6 : 0.25;
+    observer?.disconnect();
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) activate(e.target); });
+    }, { rootMargin: \`-\${line * 100}% 0px -\${95 - line * 100}% 0px\` });
+    items.forEach((step) => observer.observe(step));
+    // Room below the last step, so it reaches the reading line while the visual is still pinned.
+    const last = items[items.length - 1];
+    const pinnedBottom = parseFloat(getComputedStyle(pin).top) + pin.offsetHeight;
+    list.style.paddingBottom = \`\${Math.max(32, pinnedBottom - line * innerHeight - last.offsetHeight + 32)}px\`;
+  };
+  setup();
+  narrow.addEventListener("change", setup);
+  let resizing = 0;
+  addEventListener("resize", () => { clearTimeout(resizing); resizing = setTimeout(setup, 150); });
+  items.forEach((step) => step.addEventListener("click", () => activate(step)));
   activate(items[0]);
 });
 `,

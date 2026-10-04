@@ -50,7 +50,7 @@ export function renderPage(parts: PageParts): string {
       ${parts.summary !== undefined && html`<div class="vx-prose vx-hero-summary">${parts.summary}</div>`}
       ${parts.hasEntities && html`<div class="vx-hero-hint"><span class="vx-ref">Highlighted names</span> are interactive: hover to see them across the page, click for details.</div>`}
     </header>
-    <div class="vx-content vx-stack vx-flow">${parts.body}</div>
+    <div class="vx-content vx-stack">${parts.body}</div>
     <footer class="vx-footer">
       ${parts.repository !== undefined && html`<a href="${parts.repository.url}" target="_blank" rel="noopener">${parts.repository.url.replace(/^https?:\/\//, "")}</a> · `}Made with vizexplainer
     </footer>

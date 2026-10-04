@@ -16,6 +16,9 @@ const ICONS = {
   key: '<path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z"/>',
 } as const;
 
+/** Shown when a callout has no title, so it never reads as a plain paragraph. */
+const TONE_LABELS = { note: "Note", tip: "Tip", warning: "Warning", key: "Key idea" } as const;
+
 export const callout = defineComponent({
   name: "callout",
   description:
@@ -27,19 +30,19 @@ export const callout = defineComponent({
       text: z.string().describe("Markdown"),
     })
     .strict(),
+  // No box: a rule in the tone's colour and a coloured header set it apart, and the text keeps the reading width.
   render: (props, ctx) => html`<aside class="vx-callout vx-callout--${props.tone} vx-narrow">
-    <svg class="vx-callout-icon" viewBox="0 0 24 24" aria-hidden="true">${raw(ICONS[props.tone])}</svg>
-    <div class="vx-callout-body">
-      ${props.title !== undefined && html`<div class="vx-callout-title">${ctx.inlineMarkdown(props.title)}</div>`}
-      <div class="vx-prose">${ctx.markdown(props.text)}</div>
+    <div class="vx-callout-head">
+      <svg class="vx-callout-icon" viewBox="0 0 24 24" aria-hidden="true">${raw(ICONS[props.tone])}</svg>
+      <span>${props.title !== undefined ? ctx.inlineMarkdown(props.title) : TONE_LABELS[props.tone]}</span>
     </div>
+    <div class="vx-prose">${ctx.markdown(props.text)}</div>
   </aside>`,
   css: `
-.vx-callout { --c: var(--vx-accent); display: flex; gap: 0.85rem; padding: 1rem 1.1rem; border-radius: var(--vx-radius); background: color-mix(in oklab, var(--c) 8%, var(--vx-surface)); border: 1px solid color-mix(in oklab, var(--c) 25%, var(--vx-border)); }
+.vx-callout { --c: var(--vx-accent); padding: 0.15rem 0 0.15rem 1.1rem; border-left: 3px solid var(--c); }
 .vx-callout--tip { --c: var(--vx-green); } .vx-callout--warning { --c: var(--vx-amber); } .vx-callout--key { --c: var(--vx-accent-2); }
-.vx-callout-icon { flex: none; width: 1.3rem; height: 1.3rem; margin-top: 0.1rem; fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.vx-callout-title { font-weight: 650; margin-bottom: 0.25rem; }
-.vx-callout-body { min-width: 0; }
+.vx-callout-head { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.3rem; color: var(--c); font-weight: 650; }
+.vx-callout-icon { flex: none; width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 `,
 });
 

@@ -24,7 +24,7 @@ export const section = defineComponent({
         <${tag} class="vx-heading">${props.title}</${tag}>
         ${props.summary !== undefined && html`<div class="vx-lead">${ctx.markdown(props.summary)}</div>`}
       </header>
-      <div class="vx-stack vx-flow">${await ctx.renderBlocks(props.children, "children")}</div>
+      <div class="vx-stack">${await ctx.renderBlocks(props.children, "children")}</div>
     </section>`;
   },
   css: `

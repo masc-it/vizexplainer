@@ -97,7 +97,7 @@ A block is an object with a `type` (the component name), an optional `id` (used 
 { "type": "callout", "tone": "tip", "text": "Payments are idempotent." }
 ```
 
-Text blocks (`prose`, `callout`, `quiz`, a vertical `timeline`, and section titles and summaries) sit in a centred reading column of about 75 characters. Figures (diagrams, code, tables, cards, stats, columns, tabs, details) use the full page width. Inside a box such as `details`, `tabs` or `columns`, text fills the box.
+Every block starts at the same left edge. Text blocks (`prose`, `callout`, `quiz`, a vertical `timeline`, section titles and summaries) stop at a reading width of about 75 characters; callouts and quizzes are set apart by a coloured rule and header, not a box. Boxes and figures (diagrams, code, tables, cards, stats, columns, tabs, details) use the full page width, so they share one right edge.
 
 Container blocks have `children`. Top-level `section` blocks become the section bar at the top of the page, which also shows reading progress; keep their titles short.
 
@@ -321,7 +321,7 @@ export default ({ z, html, raw, escapeHtml, defineComponent }) =>
 - Give a custom SVG diagram `data-vx-fit data-width="W" data-height="H"` on its `<svg>` to get the same readable-size fitting as built-in diagrams; `vizx preview` then also checks its text size (it looks for text with class `vx-node-label`).
 - Reuse the theme's diagram styles instead of writing your own: `vx-canvas` (the bordered box around a diagram), `vx-node` with `vx-node-box`, `vx-node-label` and `vx-node-kind` (an entity box; put a `vx-hue-N` class on the `vx-node`), and `vx-edge` (a `<g>` around a `<path>`) and `vx-edge-label` (a `<g>` around a `<rect>` and `<text>`). Put `data-vx-diagram` on the figure, `data-node="id"` on nodes, and `data-from`/`data-to` on edges: hovering a node then lights its edges.
 - A numbered list of notes for a figure is `<ol class="vx-notes">` with `<li><span class="vx-marker">1</span><div class="vx-prose">…</div></li>` items.
-- A component that renders running text should put class `vx-narrow` on its root element, so it sits in the reading column like `prose`. Without it, the component uses the full page width.
+- A component that renders unboxed running text should put class `vx-narrow` on its root element, so its lines stop at the reading width like `prose`. Boxes and figures should not: they use the full page width.
 - Names must not clash with built-in components.
 
 ### Render context (`ctx`)

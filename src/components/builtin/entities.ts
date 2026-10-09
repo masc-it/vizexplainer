@@ -74,7 +74,7 @@ export const tree = defineComponent({
     return html`<div class="vx-tree"><ul>${roots.map((entity) => row(entity, 1))}</ul></div>`;
   },
   css: `
-.vx-tree { padding: 0.75rem 1rem; border: 1px solid var(--vx-border); border-radius: var(--vx-radius); background: var(--vx-surface); font-size: 0.93rem; overflow-x: auto; }
+.vx-tree { font-size: 0.93rem; overflow-x: auto; }
 .vx-tree ul { list-style: none; margin: 0; padding: 0; }
 .vx-tree ul ul { margin-left: 0.55rem; padding-left: 1rem; border-left: 1px dashed var(--vx-border-strong); }
 .vx-tree li { margin: 0; }

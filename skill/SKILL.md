@@ -103,7 +103,7 @@ Container blocks have `children`. Top-level `section` blocks become the section 
 
 ### Entity references in text
 
-Every markdown field supports `[[entity-id]]` and `[[entity-id|custom text]]`. A reference is coloured by the entity's kind. Hovering it highlights the same entity everywhere on the page, and clicking it opens the details panel. Use references generously. They connect your prose to your diagrams.
+Every markdown field supports `[[entity-id]]` and `[[entity-id|custom text]]`. A reference is underlined in the colour of the entity's kind. Hovering it highlights the same entity everywhere on the page, and clicking it opens the details panel. References connect your prose to your diagrams; link an entity where it matters, usually its first mention in a section, rather than on every mention.
 
 ## Components
 
@@ -319,7 +319,8 @@ export default ({ z, html, raw, escapeHtml, defineComponent }) =>
 - `props` must be a schema built with the provided `z` (Zod 4). Use `.strict()` so typos are caught.
 - If `render` throws, the error is reported as an issue for that block.
 - Give a custom SVG diagram `data-vx-fit data-width="W" data-height="H"` on its `<svg>` to get the same readable-size fitting as built-in diagrams; `vizx preview` then also checks its text size (it looks for text with class `vx-node-label`).
-- Reuse the theme's diagram styles instead of writing your own: `vx-canvas` (the bordered box around a diagram), `vx-node` with `vx-node-box`, `vx-node-label` and `vx-node-kind` (an entity box; put a `vx-hue-N` class on the `vx-node`), and `vx-edge` (a `<g>` around a `<path>`) and `vx-edge-label` (a `<g>` around a `<rect>` and `<text>`). Put `data-vx-diagram` on the figure, `data-node="id"` on nodes, and `data-from`/`data-to` on edges: hovering a node then lights its edges.
+- Reuse the theme's diagram styles instead of writing your own: `vx-canvas` (the scrolling area around a diagram), `vx-node` with `vx-node-box`, `vx-node-label` and `vx-node-kind` (an entity box; put a `vx-hue-N` class on the `vx-node`), and `vx-edge` (a `<g>` around a `<path>`) and `vx-edge-label` (a `<g>` around a `<rect>` and `<text>`). Put `data-vx-diagram` on the figure, `data-node="id"` on nodes, and `data-from`/`data-to` on edges: hovering a node then lights its edges.
+- Keep the page calm: no frame unless the content is a different surface (like code) or clickable, and colour only where it means "look here" (the reader's hover or focus, a tone the author chose). Use `--vx-text` and `--vx-muted` for everything else.
 - A numbered list of notes for a figure is `<ol class="vx-notes">` with `<li><span class="vx-marker">1</span><div class="vx-prose">…</div></li>` items.
 - A component that renders unboxed running text should put class `vx-narrow` on its root element, so its lines stop at the reading width like `prose`. Boxes and figures should not: they use the full page width.
 - Names must not clash with built-in components.

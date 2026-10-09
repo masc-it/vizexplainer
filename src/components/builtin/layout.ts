@@ -30,6 +30,8 @@ export const section = defineComponent({
   css: `
 .vx-section { display: flex; flex-direction: column; gap: 1rem; }
 .vx-section.vx-depth-1 { padding-top: 2.5rem; }
+/* Sub-sections get more room above than below, so each heading groups with its own content. */
+.vx-section:not(.vx-depth-1) { margin-top: 1.25rem; }
 .vx-section-head { display: flex; flex-direction: column; gap: 1rem; }
 .vx-section.vx-depth-1 > .vx-section-head > .vx-heading { font-size: 1.85rem; letter-spacing: -0.025em; }
 .vx-section-head > .vx-heading { margin: 0; font-size: 1.3rem; letter-spacing: -0.015em; line-height: 1.25; text-wrap: balance; }

@@ -138,6 +138,15 @@ describe("graph", () => {
     expect(forced.width).toBeGreaterThan(forced.height);
   });
 
+  it("labels box kinds only when they tell the boxes apart", async () => {
+    const doc = (kinds: string[]) =>
+      minimal([{ type: "graph" }], { entities: Object.fromEntries(kinds.map((kind, index) => [`e${index}`, { kind }])) });
+    const same = await buildFixture(doc(["folder", "folder", "folder"]));
+    expect(same.html).not.toContain('class="vx-node-kind"');
+    const mixed = await buildFixture(doc(["folder", "service", "folder"]));
+    expect(mixed.html).toMatch(/class="vx-node-kind"[^>]*>service</);
+  });
+
   it("nests children inside included parents", async () => {
     const result = await buildFixture(doc(["web", "page", "server", "handler"]));
     expect(result.html).toContain('data-from="page" data-to="handler"');

@@ -32,8 +32,8 @@ export const glossary = defineComponent({
     </dl>`;
   },
   css: `
-.vx-glossary { margin: 0; display: grid; gap: 0; border: 1px solid var(--vx-border); border-radius: var(--vx-radius); background: var(--vx-surface); overflow: hidden; }
-.vx-glossary-entry { display: grid; grid-template-columns: minmax(8rem, 14rem) 1fr; gap: 1rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--vx-border); }
+.vx-glossary { margin: 0; display: grid; gap: 0; border-top: 1px solid var(--vx-border-strong); }
+.vx-glossary-entry { display: grid; grid-template-columns: minmax(8rem, 14rem) 1fr; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--vx-border); }
 .vx-glossary-entry:last-child { border-bottom: 0; }
 .vx-glossary dt { font-weight: 650; }
 .vx-glossary dd { margin: 0; color: var(--vx-muted); }

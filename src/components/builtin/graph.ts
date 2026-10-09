@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { ResolvedEntity } from "../../document/model.ts";
 import { html, raw, type Html } from "../../html.ts";
 import { defineComponent, type RenderContext } from "../define.ts";
-import { arrowMarker, drawEdge, edgeLabel, KIND_FONT, layeredLayout, layoutBestDirection, NODE_FONT, nodeBox, textWidth, type Direction } from "./svg.ts";
+import { arrowMarker, drawEdge, edgeLabel, KIND_FONT, kindLabeller, layeredLayout, layoutBestDirection, NODE_FONT, nodeBox, textWidth, type Direction } from "./svg.ts";
 
 const Props = z
   .object({
@@ -44,6 +44,7 @@ export const graph = defineComponent({
     const parentOf = (entity: ResolvedEntity) =>
       props.nest && entity.parent !== undefined && ids.has(entity.parent) ? entity.parent : undefined;
     const edges = liftRelations(props, ctx, ids);
+    const kindLabel = kindLabeller(included.map((entity) => entity.kind));
     const childIds = new Map<string | undefined, ResolvedEntity[]>();
     for (const entity of included) childIds.set(parentOf(entity), [...(childIds.get(parentOf(entity)) ?? []), entity]);
 
@@ -52,8 +53,9 @@ export const graph = defineComponent({
       if (children.length) {
         return { id: entity.id, layoutOptions: { "elk.padding": GROUP_PADDING }, children: children.map(toElk) };
       }
-      const width = Math.max(textWidth(entity.label, NODE_FONT), entity.kind ? textWidth(entity.kind.toUpperCase(), KIND_FONT) * 1.1 : 0) + 36;
-      return { id: entity.id, width: Math.max(96, width), height: entity.kind ? 52 : 40 };
+      const kind = kindLabel(entity.kind);
+      const width = Math.max(textWidth(entity.label, NODE_FONT), kind ? textWidth(kind.toUpperCase(), KIND_FONT) * 1.1 : 0) + 36;
+      return { id: entity.id, width: Math.max(96, width), height: kind ? 52 : 40 };
     };
     const build = (direction: Direction): ElkNode => ({
       id: "__root",
@@ -67,11 +69,11 @@ export const graph = defineComponent({
       })),
     });
     const layout = props.direction === "auto" ? await layoutBestDirection(build, ctx.layout) : await ctx.layout(build(props.direction));
-    return draw(layout, edges, props, ctx);
+    return draw(layout, edges, kindLabel, props, ctx);
   },
   css: `
-.vx-graph { position: relative; border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); background: var(--vx-surface); overflow: hidden; }
-.vx-graph:fullscreen { display: flex; flex-direction: column; border-radius: 0; }
+.vx-graph { position: relative; overflow: hidden; }
+.vx-graph:fullscreen { display: flex; flex-direction: column; background: var(--vx-bg); }
 .vx-graph-canvas { padding: 1rem; cursor: grab; touch-action: pan-y; overflow: auto; }
 .vx-graph-canvas:active { cursor: grabbing; }
 .vx-graph svg { user-select: none; }
@@ -161,7 +163,7 @@ function liftRelations(props: Props, ctx: RenderContext, ids: ReadonlySet<string
   return edges;
 }
 
-function draw(layout: ElkNode, edges: Edge[], props: Props, ctx: RenderContext): Html {
+function draw(layout: ElkNode, edges: Edge[], kindLabel: (kind: string | undefined) => string | undefined, props: Props, ctx: RenderContext): Html {
   const offsets = new Map<string, { x: number; y: number }>([["__root", { x: 0, y: 0 }]]);
   const groups: Html[] = [];
   const nodes: Html[] = [];
@@ -179,11 +181,11 @@ function draw(layout: ElkNode, edges: Edge[], props: Props, ctx: RenderContext):
       groups.push(html`<g ${attrs} data-depth="${depth}">
         <rect class="vx-group-box" width="${w}" height="${h}" rx="14"/>
         <text class="vx-group-label" x="16" y="24">${entity.label}</text>
-        ${entity.kind !== undefined && html`<text class="vx-group-kind" x="${w - 16}" y="24" text-anchor="end">${entity.kind}</text>`}
+        ${kindLabel(entity.kind) !== undefined && html`<text class="vx-group-kind" x="${w - 16}" y="24" text-anchor="end">${entity.kind}</text>`}
       </g>`);
       node.children.forEach((child) => visit(child, x, y, depth + 1));
     } else {
-      nodes.push(html`<g ${attrs}>${nodeBox(w, h, entity.label, entity.kind)}</g>`);
+      nodes.push(html`<g ${attrs}>${nodeBox(w, h, entity.label, kindLabel(entity.kind))}</g>`);
     }
   };
   (layout.children ?? []).forEach((child) => visit(child, 0, 0, 0));

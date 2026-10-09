@@ -65,6 +65,15 @@ export function layeredLayout(direction: Direction, spacing: { layers: number; n
   };
 }
 
+/**
+ * Kind labels only help when they tell the drawn boxes apart. On a diagram where every box has the same kind
+ * ("folder" eleven times) they are noise, so the returned function drops them.
+ */
+export function kindLabeller(kinds: readonly (string | undefined)[]): (kind: string | undefined) => string | undefined {
+  const distinguishes = new Set(kinds).size > 1;
+  return (kind) => (distinguishes ? kind : undefined);
+}
+
 /** An ELK edge label sized for the diagram's edge font. "inline" puts the label on the edge instead of beside it. */
 export function edgeLabel(text: string): ElkLabel {
   return { text, width: textWidth(text, EDGE_FONT) + 12, height: 18, layoutOptions: { "elk.edgeLabels.inline": "true" } };

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { html, type Html } from "../../html.ts";
 import { defineComponent } from "../define.ts";
-import { arrowMarker, monoWidth, NODE_FONT, nodeBox, textWidth } from "./svg.ts";
+import { arrowMarker, kindLabeller, monoWidth, NODE_FONT, nodeBox, textWidth } from "./svg.ts";
 
 const Message = z
   .object({
@@ -96,11 +96,12 @@ export const sequence = defineComponent({
     const height = y;
     const width = centers[centers.length - 1]! + widths[widths.length - 1]! / 2 + rightExtra;
 
+    const kindLabel = kindLabeller(actors.map(({ entity }) => entity?.kind));
     const heads = actors.map(({ id, entity }, index) => {
       const w = widths[index]!;
       const x = centers[index]! - w / 2;
       return html`<line class="vx-seq-life" x1="${centers[index]}" y1="${HEAD_H}" x2="${centers[index]}" y2="${height}"/>
-        <g class="vx-node ${ctx.hueClass(entity?.kind)}" ${ctx.entityAttrs(id)} transform="translate(${x} 0)" tabindex="0" role="button">${nodeBox(w, HEAD_H, entity?.label ?? id, entity?.kind)}</g>`;
+        <g class="vx-node ${ctx.hueClass(entity?.kind)}" ${ctx.entityAttrs(id)} transform="translate(${x} 0)" tabindex="0" role="button">${nodeBox(w, HEAD_H, entity?.label ?? id, kindLabel(entity?.kind))}</g>`;
     });
     const notes = messages.filter((message) => message.note !== undefined);
 
@@ -128,14 +129,14 @@ export const sequence = defineComponent({
 /* Notes sit beside the diagram only while it still fits at full size; otherwise they wrap below it. */
 .vx-seq-layout { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
 .vx-seq-layout > .vx-canvas { flex: 999 1 0; min-inline-size: min(100%, calc(var(--vx-natural-width) + 2rem + 2px)); }
-.vx-seq-notes { flex: 1 1 15rem; position: sticky; top: calc(var(--vx-topbar) + 1rem); max-height: calc(100vh - var(--vx-topbar) - 2rem); overflow-y: auto; border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); background: var(--vx-surface); }
+.vx-seq-notes { flex: 1 1 15rem; position: sticky; top: calc(var(--vx-topbar) + 1rem); max-height: calc(100vh - var(--vx-topbar) - 2rem); overflow-y: auto; }
 .vx-seq-life { stroke: var(--vx-border-strong); stroke-width: 1.25; stroke-dasharray: 4 5; }
 .vx-seq-msg path { fill: none; stroke: var(--vx-edge-strong); stroke-width: 1.5; transition: stroke .2s, opacity .25s; }
 .vx-seq-return path { stroke-dasharray: 5 4; }
-.vx-seq-label { fill: var(--vx-text); font-weight: 550; text-anchor: middle; font-family: var(--vx-mono); paint-order: stroke; stroke: var(--vx-surface); stroke-width: 5px; stroke-linejoin: round; transition: opacity .25s; }
+.vx-seq-label { fill: var(--vx-text); font-weight: 550; text-anchor: middle; font-family: var(--vx-mono); paint-order: stroke; stroke: var(--vx-bg); stroke-width: 5px; stroke-linejoin: round; transition: opacity .25s; }
 .vx-seq-label--self { text-anchor: start; }
 .vx-seq-return .vx-seq-label { fill: var(--vx-muted); }
-.vx-seq-num { fill: var(--vx-surface); stroke: var(--vx-edge-strong); stroke-width: 1.25; }
+.vx-seq-num { fill: var(--vx-bg); stroke: var(--vx-edge-strong); stroke-width: 1.25; }
 .vx-seq-num-t { fill: var(--vx-muted); font-size: 10px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
 .vx-seq-msg.vx-edge-on path, .vx-seq-msg.vx-active path { stroke: var(--vx-accent); stroke-width: 2.25; stroke-dasharray: none; animation: none; }
 .vx-seq-return.vx-edge-on path, .vx-seq-return.vx-active path { stroke-dasharray: 5 4; }

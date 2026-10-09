@@ -107,14 +107,15 @@ h1, h2, h3, h4 { line-height: 1.25; letter-spacing: -0.015em; }
 .vx-prose strong { font-weight: 650; }
 .vx-prose h3 { font-size: 1.12rem; margin: 1.4em 0 0.4em; } .vx-prose h4 { font-size: 1rem; margin: 1.2em 0 0.3em; }
 .vx-prose blockquote { margin: 1em 0; padding: 0.1em 1em; border-left: 3px solid var(--vx-border-strong); color: var(--vx-muted); }
-:not(pre) > code { font-family: var(--vx-mono); font-size: 0.86em; padding: 0.12em 0.38em; border-radius: 5px; background: var(--vx-surface-2); border: 1px solid var(--vx-border); }
+:not(pre) > code { font-family: var(--vx-mono); font-size: 0.86em; padding: 0.12em 0.32em; border-radius: 4px; background: color-mix(in oklab, var(--vx-text) 6%, transparent); }
 .vx-prose pre { font-family: var(--vx-mono); font-size: 0.85rem; padding: 0.9rem 1rem; border-radius: var(--vx-radius); background: var(--vx-code-bg); border: 1px solid var(--vx-border); overflow-x: auto; }
 .vx-prose hr { border: 0; border-top: 1px solid var(--vx-border); margin: 2em 0; }
 .vx-prose img { max-width: 100%; border-radius: var(--vx-radius); }
 
 /* Entity references and shared bits */
-.vx-ref { --_fg: var(--hue-fg, var(--vx-accent)); --_bg: var(--hue-bg, var(--vx-accent-soft)); color: var(--_fg); background: color-mix(in oklab, var(--_bg) 60%, transparent); font-weight: 560; padding: 0.02em 0.28em; border-radius: 5px; box-shadow: inset 0 -1.5px 0 color-mix(in oklab, var(--_fg) 45%, transparent); cursor: pointer; transition: background .15s, box-shadow .15s; }
-.vx-ref:hover, .vx-ref.vx-linked { background: var(--_bg); box-shadow: inset 0 -2px 0 var(--_fg); }
+/* Calm by default: an underline in the kind's colour. The colour fills in only while the reader points at the entity, here or anywhere else on the page. */
+.vx-ref { --_fg: var(--hue-fg, var(--vx-accent)); --_bg: var(--hue-bg, var(--vx-accent-soft)); color: inherit; border-radius: 4px; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; text-decoration-color: color-mix(in oklab, var(--_fg) 60%, transparent); cursor: pointer; transition: background .15s, color .15s; }
+.vx-ref:hover, .vx-ref.vx-linked { color: var(--_fg); background: var(--_bg); text-decoration-color: var(--_fg); }
 .vx-ref-missing { color: var(--vx-amber); text-decoration: wavy underline; }
 .vx-badge { display: inline-block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--hue-fg, var(--vx-muted)); background: var(--hue-bg, var(--vx-surface-2)); padding: 0.18rem 0.55rem; border-radius: 999px; line-height: 1.4; }
 .vx-chip { display: inline-flex; align-items: center; font-family: var(--vx-mono); font-size: 0.8rem; font-weight: 550; padding: 0.18rem 0.55rem; border-radius: 7px; background: var(--hue-bg); color: var(--hue-fg); border: 1px solid transparent; cursor: pointer; }
@@ -133,7 +134,8 @@ h1, h2, h3, h4 { line-height: 1.25; letter-spacing: -0.015em; }
 .vx-focus-mode .vx-card.vx-focused { border-color: var(--hue-fg); box-shadow: var(--vx-shadow); }
 
 /* Diagrams (shared by graph, sequence, state and custom SVG components) */
-.vx-canvas { min-width: 0; padding: 1rem; border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); background: var(--vx-surface); overflow: auto; }
+/* Diagrams sit on the page without a frame; frames are kept for things that are a different surface (code) or clickable (details, cards). */
+.vx-canvas { min-width: 0; padding: 0.5rem 0; overflow: auto; }
 svg[data-vx-fit] { display: block; margin: 0 auto; width: 100%; height: auto; overflow: visible; font-family: var(--vx-sans); }
 .vx-node { cursor: pointer; transition: opacity .25s; outline: none; }
 .vx-node-box { fill: color-mix(in oklab, var(--hue-bg, var(--vx-accent-soft)) 70%, var(--vx-surface)); stroke: color-mix(in oklab, var(--hue-fg, var(--vx-accent)) 55%, transparent); stroke-width: 1.25; transition: stroke .15s, fill .15s; }
@@ -143,7 +145,7 @@ svg[data-vx-fit] { display: block; margin: 0 auto; width: 100%; height: auto; ov
 .vx-edge path { fill: none; stroke: var(--vx-edge); stroke-width: 1.5; transition: stroke .2s, opacity .25s; }
 .vx-edge.vx-edge-on path { stroke: var(--vx-accent); stroke-width: 2.25; }
 .vx-edge-label { transition: opacity .25s; }
-.vx-edge-label rect { fill: var(--vx-surface); stroke: var(--vx-border); }
+.vx-edge-label rect { fill: var(--vx-bg); stroke: var(--vx-border); }
 .vx-edge-label text { fill: var(--vx-muted); font-weight: 550; text-anchor: middle; dominant-baseline: central; }
 .vx-edge-label.vx-edge-on text { fill: var(--vx-accent); }
 [data-vx-diagram].vx-hovering .vx-edge:not(.vx-edge-on), [data-vx-diagram].vx-hovering .vx-edge-label:not(.vx-edge-on) { opacity: .25; }

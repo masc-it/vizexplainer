@@ -71,9 +71,11 @@ export const table = defineComponent({
     ${props.caption !== undefined && html`<figcaption>${ctx.inlineMarkdown(props.caption)}</figcaption>`}
   </figure>`,
   css: `
-.vx-table-wrap { overflow-x: auto; border: 1px solid var(--vx-border); border-radius: var(--vx-radius); background: var(--vx-surface); }
+/* No frame: rules between rows, and the outer columns line up with the page's text. */
+.vx-table-wrap { overflow-x: auto; }
 .vx-table { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
-.vx-table th { text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--vx-muted); background: var(--vx-surface-2); }
+.vx-table th { text-align: left; font-weight: 600; font-size: 0.86rem; color: var(--vx-muted); border-bottom-color: var(--vx-border-strong); }
+.vx-table th:first-child, .vx-table td:first-child { padding-left: 0; } .vx-table th:last-child, .vx-table td:last-child { padding-right: 0; }
 .vx-table th, .vx-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--vx-border); vertical-align: top; }
 .vx-table tr:last-child td { border-bottom: 0; }
 `,
@@ -100,7 +102,7 @@ export const stats = defineComponent({
   </div>`,
   css: `
 .vx-stats { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-.vx-stat { padding: 1rem 1.1rem; border-radius: var(--vx-radius); background: var(--vx-surface); border: 1px solid var(--vx-border); }
+.vx-stat { min-width: 0; }
 .vx-stat-value { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--vx-text); }
 .vx-stat-label { font-weight: 600; margin-top: 0.3rem; }
 .vx-stat-hint { color: var(--vx-muted); font-size: 0.85rem; margin-top: 0.15rem; }

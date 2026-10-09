@@ -48,7 +48,7 @@ export function renderPage(parts: PageParts): string {
       <h1>${parts.title}</h1>
       ${parts.subtitle !== undefined && html`<p class="vx-subtitle">${parts.subtitle}</p>`}
       ${parts.summary !== undefined && html`<div class="vx-prose vx-hero-summary">${parts.summary}</div>`}
-      ${parts.hasEntities && html`<div class="vx-hero-hint"><span class="vx-ref">Highlighted names</span> are interactive: hover to see them across the page, click for details.</div>`}
+      ${parts.hasEntities && html`<div class="vx-hero-hint"><span class="vx-ref">Underlined names</span> are interactive: hover to see them across the page, click for details.</div>`}
     </header>
     <div class="vx-content vx-stack">${parts.body}</div>
     <footer class="vx-footer">

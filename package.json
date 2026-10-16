@@ -4,6 +4,7 @@
   "description": "Toolkit for AI agents to compose visual explainers of code and codebases as self-contained HTML",
   "main": "dist/index.js",
   "scripts": {
+    "setup": "node scripts/setup.mjs",
     "build": "tsc -p tsconfig.build.json && chmod +x dist/cli.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

@@ -1,0 +1,115 @@
+{
+  "type": "section",
+  "title": "Extending it",
+  "summary": "When no built-in fits, the agent isn't stuck writing a whole page by hand.",
+  "children": [
+    {
+      "type": "tabs",
+      "tabs": [
+        {
+          "label": "Custom component",
+          "children": [
+            {
+              "type": "prose",
+              "text": "A component is a small `.mjs` file listed under `components`. It receives the toolkit (`z`, `html`, `defineComponent`), so it needs no imports, and it gets the same render context as the built-ins: entity lookup, markdown, code highlighting, layout and theme colours. This bar chart is one:"
+            },
+            {
+              "type": "bars",
+              "unit": "lines",
+              "items": [
+                {
+                  "entity": "components",
+                  "value": 1751
+                },
+                {
+                  "entity": "render",
+                  "value": 483
+                },
+                {
+                  "entity": "assets",
+                  "value": 384
+                },
+                {
+                  "entity": "document",
+                  "value": 190
+                }
+              ],
+              "caption": "The component vocabulary is most of the code; the document model is the smallest part."
+            },
+            {
+              "type": "code",
+              "source": {
+                "file": "examples/vizexplainer/components/bars.mjs",
+                "lines": [
+                  3,
+                  32
+                ]
+              },
+              "title": "examples/vizexplainer/components/bars.mjs",
+              "maxLines": 20
+            }
+          ]
+        },
+        {
+          "label": "Raw HTML",
+          "children": [
+            {
+              "type": "prose",
+              "text": "For a one-off, the `html` block inserts markup and CSS as they are. Theme variables keep it consistent:"
+            },
+            {
+              "type": "html",
+              "html": "<div class=\"demo-swatches\"><span style=\"--c: var(--vx-accent)\">accent</span><span style=\"--c: var(--vx-accent-2)\">accent-2</span><span style=\"--c: var(--vx-green)\">green</span><span style=\"--c: var(--vx-amber)\">amber</span></div>",
+              "css": ".demo-swatches { display: flex; gap: .6rem; flex-wrap: wrap; } .demo-swatches span { padding: .5rem .9rem; border-radius: 10px; font: 600 .85rem var(--vx-mono); color: var(--c); background: color-mix(in oklab, var(--c) 12%, var(--vx-surface)); border: 1px solid color-mix(in oklab, var(--c) 30%, transparent); }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "details",
+      "title": "Why lay out graphs at build time?",
+      "children": [
+        {
+          "type": "prose",
+          "text": "Laying out with [[elk]] while building means the page ships finished SVG: nothing to compute when it opens, no large libraries to download, and it prints and displays the same everywhere. The browser only adds small touches such as panning, zooming and highlighting."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "An agent needs a diagram type that no built-in component offers. What should it do first?",
+          "options": [
+            {
+              "text": "Write the whole page in raw HTML",
+              "explanation": "That throws away validation, theming and interactivity."
+            },
+            {
+              "text": "Write a small custom component module",
+              "correct": true,
+              "explanation": "It gets the same render context and theme as the built-ins."
+            },
+            {
+              "text": "Give up on the diagram"
+            }
+          ]
+        },
+        {
+          "question": "Where are graphs laid out?",
+          "options": [
+            {
+              "text": "In the reader's browser, when the page opens"
+            },
+            {
+              "text": "At build time, so the page ships finished SVG",
+              "correct": true
+            }
+          ],
+          "explanation": "[[elk]] runs during `vizx render`; the browser only adds panning, zooming and highlighting."
+        }
+      ]
+    }
+  ]
+}

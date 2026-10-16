@@ -2,7 +2,7 @@
 
 A toolkit for AI agents to build visual explainers of codebases, code paths and concepts. The output is one self-contained HTML file.
 
-An agent analyses the subject and writes a JSON document. `vizx` validates the document and renders it with auto-laid-out diagrams, highlighted code, scrollytelling walkthroughs, linked entity references, a details panel, and light and dark mode. Readers need only a browser.
+An agent outlines reader questions, then drafts and revises one chapter JSON file at a time. A manifest lists the chapters in reading order and holds shared entities and relations. `vizx` combines them into one document and renders it with diagrams, highlighted code, scrollytelling, linked references, a details panel, and light and dark mode. Readers need only a browser.
 
 ## How it works
 
@@ -15,13 +15,26 @@ Built-in components include `section`, `prose`, `callout`, `columns`, `tabs`, `d
 
 Graph layout (ELK) and syntax highlighting (Shiki) run at build time. The page therefore ships finished SVG and HTML, with only a small script for interaction.
 
+## Setup
+
+From this checkout, with Node 22.18+ and npm installed:
+
+```sh
+npm run setup
+```
+
+This runs `npm ci --include=dev`, `npm run build` and `npm link`, then copies the entire `skill/` directory, including references, to:
+
+- `~/.agents/skills/vizexplainer/`
+- `~/.claude/skills/vizexplainer/`
+
+Rerun after updating the checkout. Setup replaces these two skill directories (including local edits and stale files); other skills are untouched. Existing destination symlinks are replaced with copies without modifying their targets. Installation stops on failure; skill copying starts only after the npm commands succeed.
+
+`vizx` is linked to this checkout, so keep it in place and ensure npm's global bin directory is on your `PATH`. The skills are copies, not symlinks. To install only the CLI, run `npm ci --include=dev`, `npm run build` and `npm link` manually.
+
 ## Usage
 
 ```sh
-npm install
-npm run build
-npm link            # puts `vizx` on the PATH
-
 vizx scan ~/code/shop -o shop.json     # structure report, plus a draft document
 vizx symbols src/pay.ts                # declarations usable as "symbol" sources
 vizx validate shop.json                # errors and warnings, with exact paths
@@ -36,13 +49,46 @@ vizx schema                            # document JSON Schema
 - **`render`** writes nothing on errors unless you pass `--force`.
 - **`preview`** screenshots the page one screen at a time and reports, by block path, problems a reader would notice: unreadably small diagram text, sideways scrolling, script errors. It uses a locally installed Chrome, Chromium, Edge or Brave, or `VIZX_CHROME`.
 
+## Writing chapters
+
+Keep shared metadata and data in `explainer.json`:
+
+```json
+{
+  "title": "How checkout works",
+  "root": "../..",
+  "entities": {},
+  "relations": [],
+  "chapters": ["chapters/overview.json", "chapters/payment.json"]
+}
+```
+
+Each chapter file is one ordinary `section` block:
+
+```json
+{
+  "type": "section",
+  "title": "Overview",
+  "summary": "What does checkout do for a customer?",
+  "children": []
+}
+```
+
+Start with these outline stubs. Read, draft, validate and revise one chapter before moving to the next; finish with a whole-book edit. Put prose, diagrams and other blocks inside each section's `children`.
+
+- Chapter paths are relative to the manifest; their list order is the reading order. Chapters cannot include other files.
+- All sources use the manifest's `root`. Custom component paths remain relative to the manifest. Entity and block ids are shared across the book.
+- Pass the manifest to `validate`, `render`, `preview` and `components`. Errors and preview findings identify chapter paths, such as `chapters/payment.json:$.children[0]`.
+- Missing files, invalid JSON and non-section chapters stop loading. Empty lists, duplicate paths, absolute chapter paths, and mixing `chapters` with `blocks` are errors.
+- Single-file documents with `blocks` still work. `scan -o` still produces one: move its useful starter blocks into chapter sections, then replace `blocks` with the ordered `chapters` list.
+
 ## For agents
 
-Give the agent [`skill/SKILL.md`](skill/SKILL.md). It covers the workflow, the document format, every component, guidance on explaining well, and how to write custom components.
+Give the agent [`skill/SKILL.md`](skill/SKILL.md). It contains the incremental workflow, a minimal example and essential writing rules. Detailed [document](skill/references/document.md), [component](skill/references/components.md), [writing](skill/references/writing.md) and [custom-component](skill/references/custom-components.md) references are loaded only when needed.
 
 ## Example
 
-[`examples/vizexplainer/explainer.json`](examples/vizexplainer/explainer.json) explains this repository's own source. It uses every built-in component and one custom component ([`bars.mjs`](examples/vizexplainer/components/bars.mjs)).
+[`examples/vizexplainer/explainer.json`](examples/vizexplainer/explainer.json) lists six [chapter files](examples/vizexplainer/chapters/) explaining this repository's own source. It uses every built-in component and one custom component ([`bars.mjs`](examples/vizexplainer/components/bars.mjs)).
 
 ## Development
 
@@ -54,7 +100,7 @@ node src/cli.ts render <doc>   # run from source (Node 22.18+ strips types nativ
 
 Code layout:
 
-- `src/document/`: schema and indexed model of entities and relations.
+- `src/document/`: schemas, manifest/chapter loading, and indexed model of entities and relations.
 - `src/sources/`: symbol location, line anchors, line diffs and language detection.
 - `src/scan/`: file listing, import detection and the draft document.
 - `src/preview/`: headless-browser screenshots and rendering checks.

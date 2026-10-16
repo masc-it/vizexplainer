@@ -1,0 +1,32 @@
+{
+  "type": "section",
+  "title": "Words used on this page",
+  "children": [
+    {
+      "type": "glossary",
+      "terms": [
+        {
+          "term": "Entity",
+          "definition": "Anything worth naming in an explainer: a file, a function, a service, a concept."
+        },
+        {
+          "term": "Relation",
+          "definition": "A typed connection between two entities, such as *calls* or *imports*."
+        },
+        {
+          "term": "Block",
+          "definition": "One piece of the page, rendered by a component and referring to entities by id."
+        },
+        {
+          "term": "Component",
+          "definition": "The code that turns one kind of block into HTML. Built-in or written by the agent."
+        }
+      ],
+      "entities": [
+        "elk",
+        "shiki",
+        "zod"
+      ]
+    }
+  ]
+}

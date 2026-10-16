@@ -1,0 +1,80 @@
+{
+  "type": "section",
+  "title": "The big idea",
+  "summary": "Agents are good at understanding code and at producing structured data. They are inconsistent at visual design. So we split the job in two.",
+  "children": [
+    {
+      "type": "stats",
+      "items": [
+        {
+          "value": 1,
+          "label": "HTML file out",
+          "hint": "everything inlined, works offline"
+        },
+        {
+          "value": 20,
+          "label": "built-in components",
+          "hint": "plus any the agent writes"
+        },
+        {
+          "value": 4,
+          "label": "CLI commands",
+          "hint": "render · validate · components · schema"
+        },
+        {
+          "value": 0,
+          "label": "things for readers to install"
+        }
+      ]
+    },
+    {
+      "type": "timeline",
+      "layout": "across",
+      "numbered": true,
+      "items": [
+        {
+          "title": "Analyse",
+          "text": "The agent explores the codebase with its usual tools.",
+          "entity": "agent"
+        },
+        {
+          "title": "Describe",
+          "text": "It outlines reader questions, then drafts and revises one chapter JSON file at a time.",
+          "entity": "doc"
+        },
+        {
+          "title": "Validate",
+          "text": "`vizx validate` reports precise, fixable issues.",
+          "entity": "cli"
+        },
+        {
+          "title": "Render",
+          "text": "`vizx render` lays out, highlights and inlines everything.",
+          "entity": "build"
+        },
+        {
+          "title": "Read",
+          "text": "Anyone opens the file in a browser.",
+          "entity": "output"
+        }
+      ]
+    },
+    {
+      "type": "columns",
+      "children": [
+        {
+          "type": "callout",
+          "tone": "key",
+          "title": "The split",
+          "text": "The **agent** decides *what* to say and *in which order*. The **toolkit** decides *how it looks*."
+        },
+        {
+          "type": "callout",
+          "tone": "tip",
+          "title": "No fixed templates",
+          "text": "There is no \"architecture view\" or \"code-path view\". The agent composes blocks freely, and can write new components when none fit."
+        }
+      ]
+    }
+  ]
+}

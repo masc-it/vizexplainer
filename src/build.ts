@@ -3,9 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadRegistry, type Registry } from "./components/registry.ts";
 import { buildModel, checkModel, type Model } from "./document/model.ts";
-import { Document } from "./document/schema.ts";
+import { loadDocument } from "./document/load.ts";
+import type { Document } from "./document/schema.ts";
 import { readGitState } from "./git.ts";
-import { byDocumentOrder, error, joinPath, warning, zodIssues, type Issue } from "./issues.ts";
+import { byDocumentOrder, joinPath, warning, type Issue } from "./issues.ts";
 import { createCodeRenderer } from "./render/code.ts";
 import { createEngine } from "./render/engine.ts";
 import { renderEntityPanels } from "./render/entity-panels.ts";
@@ -19,22 +20,7 @@ export interface BuildResult {
   issues: Issue[];
 }
 
-export async function loadDocument(docPath: string): Promise<{ doc?: Document; issues: Issue[] }> {
-  let text: string;
-  try {
-    text = await readFile(docPath, "utf8");
-  } catch (failure) {
-    return { issues: [error("", `cannot read ${docPath}: ${failure instanceof Error ? failure.message : String(failure)}`)] };
-  }
-  let json: unknown;
-  try {
-    json = JSON.parse(text);
-  } catch (failure) {
-    return { issues: [error("", `invalid JSON: ${failure instanceof Error ? failure.message : String(failure)}`)] };
-  }
-  const parsed = Document.safeParse(json);
-  return parsed.success ? { doc: parsed.data, issues: [] } : { issues: zodIssues(parsed.error, "") };
-}
+export { loadDocument } from "./document/load.ts";
 
 /** Loads the built-in components plus the document's custom ones. */
 export async function loadDocumentRegistry(docPath: string, doc: Document | undefined) {
@@ -48,18 +34,18 @@ export async function buildExplainer(docPath: string): Promise<BuildResult> {
   const docDir = path.dirname(path.resolve(docPath));
 
   const { registry, issues: registryIssues } = await loadDocumentRegistry(docPath, doc);
-  return renderExplainer(doc, docDir, registry, registryIssues);
+  return renderExplainer(doc, docDir, registry, registryIssues, loaded.blockPaths);
 }
 
-async function renderExplainer(doc: Document, docDir: string, registry: Registry, priorIssues: Issue[]): Promise<BuildResult> {
+async function renderExplainer(doc: Document, docDir: string, registry: Registry, priorIssues: Issue[], blockPaths?: readonly string[]): Promise<BuildResult> {
   const model = buildModel(doc);
   const root = path.resolve(docDir, doc.root ?? ".");
   const code = createCodeRenderer({ root, repository: doc.repository });
   const engine = createEngine({ doc, model, registry, code });
 
-  const body = await engine.renderBlocks(doc.blocks, "blocks");
+  const body = await engine.renderBlocks(doc.blocks, "blocks", blockPaths);
   const summary = doc.summary !== undefined ? engine.context("summary").markdown(doc.summary) : undefined;
-  const panels = await renderEntityPanels(model, engine.context);
+  const panels = await renderEntityPanels(model, (path) => engine.context(path, false));
   const [css, runtime] = await Promise.all([
     readFile(path.join(ASSETS_DIR, "theme.css"), "utf8"),
     readFile(path.join(ASSETS_DIR, "runtime.js"), "utf8"),

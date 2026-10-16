@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 import { z } from "zod";
 import { buildExplainer, loadDocument, loadDocumentRegistry } from "./build.ts";
 import { loadRegistry } from "./components/registry.ts";
-import { Document } from "./document/schema.ts";
+import { DocumentInput } from "./document/schema.ts";
 import { formatIssue, hasErrors, type Issue } from "./issues.ts";
 import { languageFromFile } from "./sources/language.ts";
 import { listSymbols } from "./sources/symbols.ts";
@@ -28,7 +28,7 @@ Build
 
 Reference
   vizx components [explainer.json] [--json]          Components and their props, including the document's custom ones.
-  vizx schema                                        The document JSON Schema.
+  vizx schema                                        JSON Schema for a document or chapter manifest.
 
 Agent guide: skill/SKILL.md in the vizexplainer repository.`;
 
@@ -135,7 +135,7 @@ async function main(argv: string[]): Promise<number> {
         const doc = draftDocument(scan, { title: values.title ?? `How ${path.basename(root)} works`, root: path.relative(path.dirname(out), root) || "." });
         await mkdir(path.dirname(out), { recursive: true });
         await writeFile(out, `${JSON.stringify(doc, null, 2)}\n`);
-        console.log(`\nWrote draft ${path.relative(process.cwd(), out) || out}: ${Object.keys(doc.entities).length} entities, ${doc.relations.length} relations. Write the summaries and blocks, then run vizx validate.`);
+        console.log(`\nWrote draft ${path.relative(process.cwd(), out) || out}: ${Object.keys(doc.entities).length} entities, ${doc.relations.length} relations. Outline the reader questions, move starter blocks into chapter section files, and replace "blocks" with an ordered "chapters" list. Draft and validate one chapter at a time.`);
       }
       return 0;
     }
@@ -177,7 +177,7 @@ async function main(argv: string[]): Promise<number> {
       return 0;
     }
     case "schema":
-      console.log(JSON.stringify(z.toJSONSchema(Document, { io: "input", unrepresentable: "any" }), null, 2));
+      console.log(JSON.stringify(z.toJSONSchema(DocumentInput, { io: "input", unrepresentable: "any" }), null, 2));
       return 0;
     default:
       return usageError(`unknown command "${command}"`);

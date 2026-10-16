@@ -16,9 +16,9 @@ export interface OutlineEntry {
 }
 
 export interface Engine {
-  renderBlocks(blocks: readonly unknown[], path: string): Promise<Html>;
+  renderBlocks(blocks: readonly unknown[], path: string, blockPaths?: readonly string[]): Promise<Html>;
   /** A context for rendering outside the block tree, e.g. entity detail panels. */
-  context(path: string): RenderContext;
+  context(path: string, visible?: boolean): RenderContext;
   outline: OutlineEntry[];
   usedComponents: Set<ComponentDefinition>;
   /** Entities looked up while rendering blocks and the summary, i.e. the ones the reader can see. */
@@ -66,11 +66,10 @@ export function createEngine(deps: { doc: Document; model: Model; registry: Regi
     return anchor;
   }
 
-  function context(path: string, depth = 0, outlineList: OutlineEntry[] = []): RenderContext {
+  function context(path: string, depth = 0, outlineList: OutlineEntry[] = [], visible = true): RenderContext {
     const issue = (message: string) => report(error(path, message));
     const warn = (message: string) => report(warning(path, message));
-    // Entity panels render every entity; only lookups from the page itself count as "shown".
-    const visible = !path.startsWith("entities.");
+    // Hidden panels must not count their references as visible in the narrative.
     const entity = (id: string) => {
       const found = model.entities.get(id);
       if (!found) issue(`unknown entity "${id}"${suggest(id, model.entities.keys())}`);
@@ -171,11 +170,11 @@ export function createEngine(deps: { doc: Document; model: Model; registry: Regi
   }
 
   return {
-    renderBlocks: async (blocks, path) => {
-      const rendered = await Promise.all(blocks.map((block, index) => renderBlock(block, joinPath(path, index), 0, outline)));
+    renderBlocks: async (blocks, path, blockPaths) => {
+      const rendered = await Promise.all(blocks.map((block, index) => renderBlock(block, blockPaths?.[index] ?? joinPath(path, index), 0, outline)));
       return html`${rendered}`;
     },
-    context: (path) => context(path),
+    context: (path, visible) => context(path, 0, [], visible),
     outline,
     usedComponents,
     shownEntities,

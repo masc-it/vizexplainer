@@ -100,3 +100,15 @@ export const Document = z
   })
   .strict();
 export type Document = z.infer<typeof Document>;
+
+/** Authoring format: shared data plus an explicit, ordered list of chapter files. */
+export const Manifest = Document.omit({ blocks: true }).extend({
+  chapters: z.array(z.string().min(1)).min(1).describe("Section JSON files, in reading order, relative to this manifest"),
+});
+export type Manifest = z.infer<typeof Manifest>;
+
+/** A chapter is one ordinary section; component props are checked during the build. */
+export const Chapter = Block.extend({ type: z.literal("section") });
+
+/** Accepted files; the renderer always receives an assembled Document. */
+export const DocumentInput = z.union([Document, Manifest]);

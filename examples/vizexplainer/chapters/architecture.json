@@ -1,0 +1,75 @@
+{
+  "type": "section",
+  "title": "The main pieces",
+  "summary": "The source is split by responsibility: a data model, a component vocabulary and a renderer, with one orchestrator on top.",
+  "children": [
+    {
+      "type": "cards",
+      "items": [
+        {
+          "entity": "document"
+        },
+        {
+          "entity": "components"
+        },
+        {
+          "entity": "render"
+        },
+        {
+          "entity": "assets"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "entities": [
+        "cli",
+        "build",
+        "document",
+        "components",
+        "render",
+        "assets",
+        "elk",
+        "shiki",
+        "zod"
+      ],
+      "caption": "High-level architecture. Relations between files are lifted to their folders. Hover a box to trace its connections, click it for details."
+    },
+    {
+      "type": "details",
+      "title": "Show every file",
+      "children": [
+        {
+          "type": "tree",
+          "roots": [
+            "src",
+            "assets"
+          ],
+          "collapsedBelow": 3
+        },
+        {
+          "type": "graph",
+          "entities": [
+            "cli",
+            "build",
+            "document",
+            "schema",
+            "model",
+            "components",
+            "define",
+            "registry",
+            "builtin",
+            "render",
+            "engine",
+            "code",
+            "markdown",
+            "panels",
+            "page"
+          ],
+          "direction": "down",
+          "caption": "File-level dependencies inside `src`."
+        }
+      ]
+    }
+  ]
+}

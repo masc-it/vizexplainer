@@ -1,0 +1,62 @@
+{
+  "type": "section",
+  "title": "The document model",
+  "summary": "One shared vocabulary of things and connections, many ways to show it.",
+  "children": [
+    {
+      "type": "columns",
+      "minWidth": 300,
+      "children": [
+        {
+          "type": "prose",
+          "text": "An explainer has three layers:\n\n- **Entities**: anything worth naming, such as a file, a function, a service or a concept. Each has a short plain-language `summary`, optional `details` and an optional `source`.\n- **Relations**: typed connections such as *calls*, *imports* or *reads*.\n- **Blocks**: the presentation, a tree of components that refer to entities by id.\n\nBecause blocks only *refer* to entities, the same [[engine]] can appear in a graph, a sequence diagram, a card and a sentence, and hovering it lights up every one of them."
+        },
+        {
+          "type": "code",
+          "entity": "schema",
+          "maxLines": 22
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Field",
+        "What it's for"
+      ],
+      "rows": [
+        [
+          "`title`, `subtitle`, `summary`",
+          "The hero at the top of the page"
+        ],
+        [
+          "`root`",
+          "Where `source.file` paths start, usually the repository root"
+        ],
+        [
+          "`repository`",
+          "Adds *View source* links to code blocks"
+        ],
+        [
+          "`components`",
+          "Paths to custom component modules"
+        ],
+        [
+          "`entities`, `relations`",
+          "The shared data"
+        ],
+        [
+          "`blocks`",
+          "The page itself"
+        ]
+      ],
+      "caption": "Top-level document fields"
+    },
+    {
+      "type": "callout",
+      "tone": "tip",
+      "title": "Point at code by name",
+      "text": "A source like `{ \"file\": \"src/render/engine.ts\", \"symbol\": \"createEngine.renderBlock\" }` is resolved to the right lines at build time, so it keeps working when the code moves. `vizx symbols <file>` lists what can be named."
+    }
+  ]
+}

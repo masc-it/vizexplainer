@@ -1,0 +1,218 @@
+{
+  "type": "section",
+  "title": "Following one render",
+  "summary": "What happens between typing `vizx render explainer.json` and getting a page? Scroll through the steps; the diagram follows along.",
+  "children": [
+    {
+      "type": "steps",
+      "visual": {
+        "type": "graph",
+        "entities": [
+          "cli",
+          "build",
+          "schema",
+          "model",
+          "registry",
+          "engine",
+          "code",
+          "markdown",
+          "page",
+          "panels",
+          "shiki",
+          "elk"
+        ],
+        "nest": false,
+        "direction": "down",
+        "edgeLabels": false
+      },
+      "steps": [
+        {
+          "title": "The CLI hands off",
+          "text": "[[cli]] does nothing clever: it calls [[build]] and decides what to do with the result. Without `--force`, any issue means nothing is written.",
+          "focus": [
+            "cli",
+            "build"
+          ]
+        },
+        {
+          "title": "Parse and check the document",
+          "text": "[[build]] reads the JSON and validates it against the [[schema]]. Then [[model]] checks cross-references: every `parent`, `from` and `to` must name a real entity.",
+          "focus": [
+            "build",
+            "schema",
+            "model"
+          ]
+        },
+        {
+          "title": "Gather the components",
+          "text": "[[registry]] starts from the built-ins and imports each custom module listed in the document. A module that doesn't look like a component is reported, not trusted.",
+          "focus": [
+            "build",
+            "registry"
+          ]
+        },
+        {
+          "title": "Walk the blocks",
+          "text": "[[engine]] visits each block, finds its component and validates the block's props against that component's schema. Errors carry the exact block path.",
+          "focus": [
+            "build",
+            "engine",
+            "registry"
+          ]
+        },
+        {
+          "title": "Render code and diagrams",
+          "text": "Components ask the context for help. Code goes to [[code]], which highlights it with [[shiki]]; graphs are laid out by [[elk]]. Both happen at build time, so the page stays light.",
+          "focus": [
+            "engine",
+            "code",
+            "shiki",
+            "elk",
+            "markdown"
+          ]
+        },
+        {
+          "title": "Assemble one file",
+          "text": "[[page]] wraps everything in the shell and inlines [[theme]], [[runtime]] and the CSS and scripts of only the components that were used.",
+          "focus": [
+            "build",
+            "page",
+            "panels"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "prose",
+      "text": "The same story, in time order:"
+    },
+    {
+      "type": "sequence",
+      "participants": [
+        "cli",
+        "build",
+        "registry",
+        "engine",
+        "code",
+        "page"
+      ],
+      "messages": [
+        {
+          "from": "cli",
+          "to": "build",
+          "label": "buildExplainer(path)",
+          "note": "The CLI only parses arguments and delegates."
+        },
+        {
+          "from": "build",
+          "to": "build",
+          "label": "parse + validate JSON",
+          "note": "JSON syntax, the document schema, then cross-references."
+        },
+        {
+          "from": "build",
+          "to": "registry",
+          "label": "loadRegistry(components)",
+          "note": "Built-ins plus the document's custom modules."
+        },
+        {
+          "from": "registry",
+          "to": "build",
+          "kind": "return",
+          "label": "registry"
+        },
+        {
+          "from": "build",
+          "to": "engine",
+          "label": "renderBlocks(blocks)",
+          "note": "Blocks render in parallel; each gets a context scoped to its path."
+        },
+        {
+          "from": "engine",
+          "to": "engine",
+          "label": "validate props",
+          "note": "Each block's props are checked against its component's schema."
+        },
+        {
+          "from": "engine",
+          "to": "code",
+          "label": "code(source)",
+          "note": "File reads and highlighting are cached per build."
+        },
+        {
+          "from": "code",
+          "to": "engine",
+          "kind": "return",
+          "label": "highlighted html"
+        },
+        {
+          "from": "build",
+          "to": "page",
+          "label": "renderPage(parts)",
+          "note": "Only the CSS and scripts of components actually used are inlined."
+        },
+        {
+          "from": "build",
+          "to": "cli",
+          "kind": "return",
+          "label": "{ html, issues }",
+          "note": "Issues are always returned; the CLI decides whether to write."
+        }
+      ],
+      "caption": "The same journey as a sequence diagram. Hover a message or a note to pair them."
+    },
+    {
+      "type": "steps",
+      "visual": {
+        "type": "code",
+        "source": {
+          "file": "src/render/engine.ts",
+          "symbol": "createEngine.renderBlock"
+        },
+        "title": "renderBlock() in src/render/engine.ts"
+      },
+      "steps": [
+        {
+          "title": "Every block needs a type",
+          "text": "A block is any object with a `type`. Everything else is props.",
+          "lines": {
+            "match": "if (typeof block !== \"object\"",
+            "lines": 5
+          }
+        },
+        {
+          "title": "Find the component",
+          "text": "Unknown types are reported with a suggestion, e.g. `unknown component \"grpah\" (did you mean \"graph\"?)`.",
+          "lines": {
+            "match": "const component = registry.get(type);",
+            "lines": 5
+          }
+        },
+        {
+          "title": "Validate props",
+          "text": "The component's own schema checks the props. Because built-ins use strict schemas, typos in prop names are caught too.",
+          "lines": {
+            "match": "const parsed = component.props.safeParse(props);",
+            "lines": 6
+          }
+        },
+        {
+          "title": "Register in the outline",
+          "text": "Components can declare an outline title. That is how sections end up in the table of contents, and custom components can do the same.",
+          "lines": {
+            "match": "const title = component.outline?.(parsed.data);",
+            "lines": 11
+          }
+        },
+        {
+          "title": "Render, safely",
+          "text": "The component renders with a context scoped to its path. If a custom component throws, the failure becomes an issue instead of a crash.",
+          "lines": {
+            "match": "const output = await component.render(",
+            "lines": 8
+          }
+        }
+      ]
+    }
+  ]
+}
